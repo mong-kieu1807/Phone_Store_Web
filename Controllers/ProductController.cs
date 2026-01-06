@@ -4,11 +4,11 @@ using PhoneStore.Models;
 
 namespace PhoneStore.Controllers;
 
-public class HomeController : Controller
+public class ProductController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ILogger<ProductController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public ProductController(ILogger<ProductController> logger)
     {
         _logger = logger;
     }
@@ -17,7 +17,10 @@ public class HomeController : Controller
     {
         return View();
     }
-
+    public IActionResult Details()
+    {
+        return View();
+    }
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

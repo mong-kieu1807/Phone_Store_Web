@@ -4,20 +4,20 @@ using PhoneStore.Models;
 
 namespace PhoneStore.Controllers;
 
-public class HomeController : Controller
+public class OrderController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ILogger<OrderController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public OrderController(ILogger<OrderController> logger)
     {
         _logger = logger;
     }
 
-    public IActionResult Index()
+    public IActionResult Checkout()
     {
         return View();
     }
-
+    
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PhoneStore</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PhoneStore.styles.css" asp-append-version="true" />
+
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link type="text/css" rel="stylesheet" href="~/css/bootstrap.min.css"/>
+        <!-- Slick -->
+    <link type="text/css" rel="stylesheet" href="~/css/slick.css"/>
+    <link type="text/css" rel="stylesheet" href="~/css/slick-theme.css"/>
+
+    <!-- nouislider -->
+    <link type="text/css" rel="stylesheet" href="~/css/nouislider.min.css"/>
+
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+
+    <!-- Custom stlylesheet -->
+    <link type="text/css" rel="stylesheet" href="~/css/style.css"/>
+
+</head>
+<body>
+    <!-- TopHeader -->
+	@await Html.PartialAsync("~/Views/Shared/Partials/_TopHeader.cshtml")
+	<!-- endTopHeader -->
+    
+    <!-- Header -->
+	@await Html.PartialAsync("~/Views/Shared/Partials/_Header.cshtml")
+	<!-- endHeader -->
+    <!-- NavBar -->
+	@await Html.PartialAsync("~/Views/Shared/Partials/_NavBar.cshtml")
+	<!-- endNavbar -->
+    <!-- Breadcrumb -->
+	@await Html.PartialAsync("~/Views/Shared/Partials/_Breadcrumb.cshtml")
+	<!-- endBreadcrumb -->
+
+    <!-- SECTION -->
+    @RenderBody()
+    <!-- /SECTION -->
+
+    <!-- Footer -->
+	@await Html.PartialAsync("~/Views/Shared/Partials/_NewsLetter.cshtml")
+    <!-- /Footer -->
+    <!-- Footer -->
+	@await Html.PartialAsync("~/Views/Shared/Partials/_Footer.cshtml")
+    <!-- /Footer -->
+    
+    <!-- jQuery Plugins -->
+		<script src="~/js/jquery.min.js"></script>
+		<script src="~/js/bootstrap.min.js"></script>
+		<script src="~/js/slick.min.js"></script>
+		<script src="~/js/nouislider.min.js"></script>
+		<script src="~/js/jquery.zoom.min.js"></script>
+		<script src="~/js/main.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,7 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+using PhoneStore.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
 builder.Services.AddControllersWithViews();
+
+//Ket noi database
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
+
+builder.Services.AddSession();
 
 var app = builder.Build();
 

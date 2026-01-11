@@ -8,8 +8,7 @@ namespace PhoneStore.Models
 	public class Product
 	{
 		[Key]
-		public int product_id { get; set; }              // Khóa chính
-
+		public int product_id { get; set; }             // Khóa chính
 		[Required]
 		public string product_name { get; set; } = string.Empty;      // Tên sản phẩm
 		

@@ -4,7 +4,7 @@ using PhoneStore.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services
 builder.Services.AddControllersWithViews();
 
 //Ket noi database
@@ -19,16 +19,17 @@ builder.Services.AddSession();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware
 if (!app.Environment.IsDevelopment())
 {
-	app.UseExceptionHandler("/Home/Error");
-	// The default HSTS value is 30 days. You may want to change this for production scenarios.
-	app.UseHsts();
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // ?� s?a l?nh n�y cho ?�ng v?i .NET 8
+
+// ✅ DÙNG CÁI NÀY THAY CHO MapStaticAssets
+app.UseStaticFiles();
 
 app.UseRouting();
 
@@ -42,8 +43,7 @@ app.MapControllerRoute(
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
-	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
-// ?� x�a b? .WithStaticAssets() g�y l?i
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

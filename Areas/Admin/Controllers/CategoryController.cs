@@ -15,36 +15,27 @@ namespace PhoneStore.Areas.Admin.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var categories = await _context.Categories
-                .OrderBy(c => c.category_id)
-                .ToListAsync();
+            // Dữ liệu tĩnh mẫu
+            var categories = new List<Category>
+            {
+                new Category { category_id = 1, category_name = "Điện thoại", description = "Các loại điện thoại thông minh", status = 1, created_at = DateTime.Now.AddMonths(-6), updated_at = DateTime.Now.AddDays(-10) },
+                new Category { category_id = 2, category_name = "Laptop", description = "Máy tính xách tay", status = 1, created_at = DateTime.Now.AddMonths(-5), updated_at = DateTime.Now.AddDays(-8) },
+                new Category { category_id = 3, category_name = "Tablet", description = "Máy tính bảng", status = 1, created_at = DateTime.Now.AddMonths(-4), updated_at = DateTime.Now.AddDays(-5) },
+                new Category { category_id = 4, category_name = "Phụ kiện", description = "Phụ kiện điện thoại, laptop", status = 1, created_at = DateTime.Now.AddMonths(-3), updated_at = DateTime.Now.AddDays(-3) },
+                new Category { category_id = 5, category_name = "Tai nghe", description = "Tai nghe không dây, có dây", status = 1, created_at = DateTime.Now.AddMonths(-2), updated_at = DateTime.Now.AddDays(-1) }
+            };
             
             return View(categories);
         }
 
-        // Xóa danh mục
+        // Xóa danh mục (Chức năng tạm thời - Dữ liệu tĩnh)
         [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
-            try
-            {
-                var category = await _context.Categories.FindAsync(id);
-                if (category == null)
-                {
-                    return Json(new { success = false, message = "Không tìm thấy danh mục!" });
-                }
-
-                _context.Categories.Remove(category);
-                await _context.SaveChangesAsync();
-
-                return Json(new { success = true, message = "Xóa danh mục thành công!" });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = "Lỗi: " + ex.Message });
-            }
+            // Không thực hiện xóa thật sự - chỉ trả về thông báo
+            return Json(new { success = true, message = "Chức năng đang phát triển - Dữ liệu tĩnh" });
         }
     }
 }

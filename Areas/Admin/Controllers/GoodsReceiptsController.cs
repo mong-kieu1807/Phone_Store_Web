@@ -15,36 +15,27 @@ namespace PhoneStore.Areas.Admin.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var receipts = await _context.GoodsReceipts
-                .OrderBy(g => g.import_id)
-                .ToListAsync();
+            // Dữ liệu tĩnh mẫu
+            var receipts = new List<GoodsReceipts>
+            {
+                new GoodsReceipts { import_id = 1, supplier_id = 1, user_id = 1, total_cost = 50000000, status = 1, created_at = DateTime.Now.AddDays(-10) },
+                new GoodsReceipts { import_id = 2, supplier_id = 2, user_id = 1, total_cost = 35000000, status = 1, created_at = DateTime.Now.AddDays(-7) },
+                new GoodsReceipts { import_id = 3, supplier_id = 1, user_id = 2, total_cost = 28000000, status = 1, created_at = DateTime.Now.AddDays(-5) },
+                new GoodsReceipts { import_id = 4, supplier_id = 3, user_id = 1, total_cost = 42000000, status = 1, created_at = DateTime.Now.AddDays(-3) },
+                new GoodsReceipts { import_id = 5, supplier_id = 2, user_id = 2, total_cost = 31000000, status = 1, created_at = DateTime.Now.AddDays(-1) }
+            };
             
             return View(receipts);
         }
 
-        // Xóa phiếu nhập
+        // Xóa phiếu nhập (Chức năng tạm thời - Dữ liệu tĩnh)
         [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
-            try
-            {
-                var receipt = await _context.GoodsReceipts.FindAsync(id);
-                if (receipt == null)
-                {
-                    return Json(new { success = false, message = "Không tìm thấy phiếu nhập!" });
-                }
-
-                _context.GoodsReceipts.Remove(receipt);
-                await _context.SaveChangesAsync();
-
-                return Json(new { success = true, message = "Xóa phiếu nhập thành công!" });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = "Lỗi: " + ex.Message });
-            }
+            // Không thực hiện xóa thật sự - chỉ trả về thông báo
+            return Json(new { success = true, message = "Chức năng đang phát triển - Dữ liệu tĩnh" });
         }
     }
 }

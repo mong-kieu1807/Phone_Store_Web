@@ -28,7 +28,7 @@ namespace PhoneStore.Areas.Admin.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Login(string username, string password)
+		public IActionResult Login(string username, string password)
 		{
 			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
 			{
@@ -36,32 +36,19 @@ namespace PhoneStore.Areas.Admin.Controllers
 				return View();
 			}
 
-			try
+			// Dữ liệu tĩnh - Tài khoản admin mẫu
+			if (username == "admin" && password == "admin123")
 			{
-				var user = await _context.Users
-					.FirstOrDefaultAsync(u => u.username == username && u.password == password && u.status == 1);
-
-				if (user != null && user.role == "Admin")
-				{
-					// Lưu thông tin user vào session
-					HttpContext.Session.SetString("AdminLoggedIn", user.user_id.ToString());
-					HttpContext.Session.SetString("AdminUsername", user.username);
-					HttpContext.Session.SetString("AdminFullName", user.full_name);
-					
-					return RedirectToAction("Index", "Home");
-				}
-				else if (user != null && user.role != "Admin")
-				{
-					ViewBag.Error = "Bạn không có quyền truy cập trang quản trị.";
-				}
-				else
-				{
-					ViewBag.Error = "Sai tài khoản hoặc mật khẩu";
-				}
+				// Lưu thông tin user vào session
+				HttpContext.Session.SetString("AdminLoggedIn", "1");
+				HttpContext.Session.SetString("AdminUsername", "admin");
+				HttpContext.Session.SetString("AdminFullName", "Quản trị viên");
+				
+				return RedirectToAction("Index", "Home");
 			}
-			catch (Exception ex)
+			else
 			{
-				ViewBag.Error = "Lỗi: " + ex.Message;
+				ViewBag.Error = "Sai tài khoản hoặc mật khẩu. Dùng: admin/admin123";
 			}
 
 			return View();

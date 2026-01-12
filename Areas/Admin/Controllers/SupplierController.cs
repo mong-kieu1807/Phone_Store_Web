@@ -15,36 +15,27 @@ namespace PhoneStore.Areas.Admin.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var suppliers = await _context.Suppliers
-                .OrderBy(s => s.supplier_id)
-                .ToListAsync();
+            // Dữ liệu tĩnh mẫu
+            var suppliers = new List<Supplier>
+            {
+                new Supplier { supplier_id = 1, supplier_name = "Công ty TNHH Apple Việt Nam", address = "123 Lê Duẩn, Q1, TP.HCM", phone = "0281234567", email = "apple@vietnam.vn", status = 1 },
+                new Supplier { supplier_id = 2, supplier_name = "Samsung Việt Nam", address = "456 Nguyễn Huệ, Q1, TP.HCM", phone = "0282345678", email = "samsung@vn.com", status = 1 },
+                new Supplier { supplier_id = 3, supplier_name = "Xiaomi Store Vietnam", address = "789 Hai Bà Trưng, Q3, TP.HCM", phone = "0283456789", email = "xiaomi@vn.com", status = 1 },
+                new Supplier { supplier_id = 4, supplier_name = "Oppo Mobile VN", address = "321 Điện Biên Phủ, Q10, TP.HCM", phone = "0284567890", email = "oppo@vietnam.vn", status = 1 },
+                new Supplier { supplier_id = 5, supplier_name = "Vivo Vietnam Co., Ltd", address = "654 Lý Thường Kiệt, Q5, TP.HCM", phone = "0285678901", email = "vivo@vn.com", status = 1 }
+            };
             
             return View(suppliers);
         }
 
-        // Xóa nhà cung cấp
+        // Xóa nhà cung cấp (Chức năng tạm thời - Dữ liệu tĩnh)
         [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
-            try
-            {
-                var supplier = await _context.Suppliers.FindAsync(id);
-                if (supplier == null)
-                {
-                    return Json(new { success = false, message = "Không tìm thấy nhà cung cấp!" });
-                }
-
-                _context.Suppliers.Remove(supplier);
-                await _context.SaveChangesAsync();
-
-                return Json(new { success = true, message = "Xóa nhà cung cấp thành công!" });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = "Lỗi: " + ex.Message });
-            }
+            // Không thực hiện xóa thật sự - chỉ trả về thông báo
+            return Json(new { success = true, message = "Chức năng đang phát triển - Dữ liệu tĩnh" });
         }
     }
 }

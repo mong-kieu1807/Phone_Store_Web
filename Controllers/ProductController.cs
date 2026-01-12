@@ -1,22 +1,61 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using PhoneStore.Models;
+using PhoneStore.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace PhoneStore.Controllers;
 
 public class ProductController : Controller
 {
     private readonly ILogger<ProductController> _logger;
+    private readonly ApplicationDbContext _context;
 
-    public ProductController(ILogger<ProductController> logger)
+    public ProductController(ILogger<ProductController> logger, ApplicationDbContext context)
     {
         _logger = logger;
+        _context = context;
     }
 
-    public IActionResult Index()
+     public async Task<IActionResult> Index(int page = 1, int pageSize = 3, int sort = 0)
     {
-        return View();
+        //Chỉ lấy sản phẩm đang hoạt động
+        var query = _context.Products.Where(p => p.status == 1);
+
+        switch (sort)
+        {
+            case 1: // Price Low -> High
+                query = query.OrderBy(p => p.price);
+                break;
+            case 2: // Price High -> Low
+                query = query.OrderByDescending(p => p.price);
+                break;
+            default: // Popular
+                query = query.OrderByDescending(p => p.created_at);
+                break;
+        }
+
+        //Tổng số sản phẩm (sau khi filter)
+        int totalProducts = await query.CountAsync();
+
+        //Tổng số trang
+        int totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+
+        //Lấy dữ liệu theo trang
+        var products = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        //Truyền dữ liệu ra View
+        ViewBag.CurrentPage = page;      // Trang hiện tại
+        ViewBag.TotalPages  = totalPages; // Tổng trang
+        ViewBag.PageSize    = pageSize;   // Số SP / trang
+        ViewBag.Sort        = sort;       // Trạng thái sort
+
+        return View(products);
     }
+
     public IActionResult Details()
     {
         return View();

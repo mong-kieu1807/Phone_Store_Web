@@ -1,5 +1,33 @@
+@model List<PhoneStore.Models.Product>
 @{
     ViewData["Title"] = "Products";
+
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages  = ViewBag.TotalPages ?? 1;
+    int pageSize    = ViewBag.PageSize ?? 3;
+
+    int maxPagesToShow = 5; //số trang hiển thị tối đa
+    int sort = ViewBag.Sort ?? 0; //trạng thái sắp xếp
+
+    int startPage = Math.Max(1, currentPage - 2);
+    int endPage   = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+
+    if (endPage - startPage < maxPagesToShow - 1)
+    {
+        startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+    }
+}
+
+@functions {
+    public string GetFirstImage(string imageString)
+    {
+        if (string.IsNullOrEmpty(imageString))
+        {
+            return "default.png";
+        }
+        var images = imageString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        return images.Length > 0 ? images[0].Trim() : "default.png";
+    }
 }
 
 <!-- SECTION: Product List with Filter -->
@@ -110,23 +138,62 @@
 
             <!-- STORE: Main Product Grid -->
             <div id="store" class="col-md-9">
-
                 <!-- Store Top Filter (Sort & View) -->
                 <div class="store-filter clearfix">
                     <div class="store-sort">
-                        <label>
+                       <label>
                             Sort By:
-                            <select class="input-select">
-                                <option value="0">Popular</option>
-                                <option value="1">Price: Low to High</option>
-                                <option value="2">Price: High to Low</option>
+                            <select class="input-select"
+                                    data-url="@Url.Action("Index","Product")"
+                                    onchange="location.href =this.dataset.url +'?page=1&pageSize=@pageSize&sort=' + this.value;">
+                                    
+                                @if (sort == 0){
+                                    <option value="0" selected>Popular</option>
+                                }
+                                else {
+                                    <option value="0">Popular</option>
+                                }
+
+                                @if (sort == 1) {
+                                    <option value="1" selected>Price: Low to High</option>
+                                }
+                                else{
+                                    <option value="1">Price: Low to High</option>
+                                }
+
+                                @if (sort == 2) {
+                                    <option value="2" selected>Price: High to Low</option>
+                                }
+                                else{
+                                    <option value="2">Price: High to Low</option>
+                                }
                             </select>
                         </label>
                         <label>
                             Show:
-                            <select class="input-select">
-                                <option value="0">20</option>
-                                <option value="1">50</option>
+                            <select class="input-select"
+                                    data-url="@Url.Action("Index","Product")"
+                                    onchange="location.href = this.dataset.url + '?page=1&pageSize=' + this.value;">
+                                @if (pageSize == 3){
+                                    <option value="3" selected>3</option>
+                                }
+                                else{
+                                    <option value="3">3</option>
+                                }
+
+                                @if (pageSize == 6){
+                                    <option value="6" selected>6</option>
+                                }
+                                else{
+                                    <option value="6">6</option>
+                                }
+
+                                @if (pageSize == 9){
+                                    <option value="9" selected>9</option>
+                                }
+                                else{
+                                    <option value="9">9</option>
+                                }
                             </select>
                         </label>
                     </div>
@@ -139,160 +206,92 @@
 
                 <!-- Product Grid -->
                 <div class="row">
-                    <!-- Một sản phẩm (lặp lại theo dữ liệu thực tế từ Model) -->
-                    <!--SP 1-->
-                    <div class="col-md-4 col-xs-6">
-                        <div class="product">
-                            <div class="product-img">
-                                <img src="/img/product01.png" alt="">
-                                <div class="product-label">
-                                    <span class="sale">-30%</span>
-                                    <span class="new">NEW</span>
+                    @foreach(var item in Model)
+                    {
+                        <div class="col-md-4 col-xs-6">
+                            <div class="product">
+                                <div class="product-img">
+                                    <img src="~/img/@GetFirstImage(item.image)" alt="@item.product_name">
+                                    @if (item.discount_percent > 0)
+                                    {
+                                        <div class="product-label">
+                                            <span class="sale">-@item.discount_percent%</span>
+                                        </div>
+                                    }
                                 </div>
-                            </div>
-                            <div class="product-body">
-                                <p class="product-category">Category</p>
-                                <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                                <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                                <div class="product-rating">
-                                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                                <div class="product-body">
+                                    <p class="product-category">@item.brand</p>
+                                    <h3 class="product-name">
+                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@item.product_id">
+                                            @item.product_name
+                                        </a>
+                                    </h3>
+                                    <h4 class="product-price">
+                                        @((item.price * (100 - item.discount_percent)/100).ToString("N0")) VND
+                                        @if (item.discount_percent > 0)
+                                        {
+                                            <del class="product-old-price">@item.price.ToString("N0") VND</del>
+                                        }
+                                    </h4>
                                 </div>
-                                <div class="product-btns">
-                                    <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-                                    <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-                                    <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+                                <div class="add-to-cart">
+                                    <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
                                 </div>
-                            </div>
-                            <div class="add-to-cart">
-                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
                             </div>
                         </div>
-                    </div>
-                    <!--SP 2-->
-                    <div class="col-md-4 col-xs-6">
-								<div class="product">
-									<div class="product-img">
-										<img src="/img/product02.png" alt="">
-									</div>
-									<div class="product-body">
-										<p class="product-category">Category</p>
-										<h3 class="product-name"><a href="#">product name goes here</a></h3>
-										<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-										<div class="product-rating">
-										</div>
-										<div class="product-btns">
-											<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-											<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-											<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-										</div>
-									</div>
-									<div class="add-to-cart">
-										<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-									</div>
-								</div>
-							</div>
-                            <!--SP 3-->
-                            <div class="col-md-4 col-xs-6">
-								<div class="product">
-									<div class="product-img">
-										<img src="/img/product03.png" alt="">
-									</div>
-									<div class="product-body">
-										<p class="product-category">Category</p>
-										<h3 class="product-name"><a href="#">product name goes here</a></h3>
-										<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-										<div class="product-rating">
-										</div>
-										<div class="product-btns">
-											<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-											<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-											<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-										</div>
-									</div>
-									<div class="add-to-cart">
-										<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-									</div>
-								</div>
-							</div>
-                            <!--SP 4-->
-                            <div class="col-md-4 col-xs-6">
-								<div class="product">
-									<div class="product-img">
-										<img src="/img/product04.png" alt="">
-									</div>
-									<div class="product-body">
-										<p class="product-category">Category</p>
-										<h3 class="product-name"><a href="#">product name goes here</a></h3>
-										<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-										<div class="product-rating">
-										</div>
-										<div class="product-btns">
-											<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-											<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-											<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-										</div>
-									</div>
-									<div class="add-to-cart">
-										<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-									</div>
-								</div>
-							</div>
-                            <!--SP 5-->
-                            <div class="col-md-4 col-xs-6">
-								<div class="product">
-									<div class="product-img">
-										<img src="/img/product05.png" alt="">
-									</div>
-									<div class="product-body">
-										<p class="product-category">Category</p>
-										<h3 class="product-name"><a href="#">product name goes here</a></h3>
-										<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-										<div class="product-rating">
-										</div>
-										<div class="product-btns">
-											<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-											<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-											<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-										</div>
-									</div>
-									<div class="add-to-cart">
-										<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-									</div>
-								</div>
-							</div>
-                            <!--SP 6-->
-                            <div class="col-md-4 col-xs-6">
-								<div class="product">
-									<div class="product-img">
-										<img src="/img/product06.png" alt="">
-									</div>
-									<div class="product-body">
-										<p class="product-category">Category</p>
-										<h3 class="product-name"><a href="#">product name goes here</a></h3>
-										<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-										<div class="product-rating">
-										</div>
-										<div class="product-btns">
-											<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-											<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-											<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-										</div>
-									</div>
-									<div class="add-to-cart">
-										<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-									</div>
-								</div>
-							</div>
-                    <!-- Kết thúc lặp sản phẩm -->
+                    }
                 </div>
+                
+                <!-- Store Bottom Filter -->
                 <div class="store-filter clearfix">
-                    <span class="store-qty">Showing 20-100 products</span>
+                    <span class="store-qty">
+                        Page @currentPage / @totalPages
+                    </span>
                     <ul class="store-pagination">
-                        <li class="active">1</li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                        <li><a href="#"><i class="fa fa-angle-right"></i></a></li>
+                        @* Trang trước *@
+                        @if (currentPage > 1)
+                        {
+                            <li>
+                                <a href="@Url.Action("Index","Product",new { page = currentPage - 1, pageSize, sort })">
+                                    <i class="fa fa-angle-left"></i>
+                                </a>
+                            </li>
+                        }
+                        @* Nhảy về đầu *@
+                        @if (startPage > 1)
+                        {
+                            <li>
+                                <a href="@Url.Action("Index","Product", new { page = 1, pageSize, sort })">1</a>
+                            </li>
+                            <li class="disabled"><span>...</span></li>
+                        }
+                        @* Các trang chính (tối đa 5) *@
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            <li class="@(i == currentPage ? "active" : "")">
+                                <a href="@Url.Action("Index","Product", new { page = i, pageSize, sort })">@i
+                                </a>
+                            </li>
+                        }
+                        @* Nhảy về cuối *@
+                        @if (endPage < totalPages)
+                        {
+                            <li class="disabled"><span>...</span></li>
+                            <li>
+                                <a href="@Url.Action("Index","Product",new { page = totalPages, pageSize, sort })">
+                                    @totalPages
+                                </a>
+                            </li>
+                        }
+                        @* Trang sau *@
+                        @if (currentPage < totalPages)
+                        {
+                            <li>
+                                <a href="@Url.Action("Index","Product",new { page = currentPage + 1, pageSize, sort })">
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
                 <!-- /Store Bottom Filter -->

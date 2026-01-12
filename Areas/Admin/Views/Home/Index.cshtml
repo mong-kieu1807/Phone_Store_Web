@@ -1,0 +1,300 @@
+@{
+	ViewData["Title"] = "Dashboard";
+}
+
+<div id="page-wrapper">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">
+					<i class="fa fa-dashboard"></i> Tổng quan
+				</h1>
+			</div>
+		</div>
+
+		<!-- Statistics Cards -->
+		<div class="row">
+			<div class="col-lg-3 col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-shopping-cart fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">@ViewBag.TotalOrders</div>
+								<div>Đơn hàng</div>
+							</div>
+						</div>
+					</div>
+					<a asp-area="Admin" asp-controller="Order" asp-action="Index">
+						<div class="panel-footer">
+							<span class="pull-left">Xem chi tiết</span>
+							<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+							<div class="clearfix"></div>
+						</div>
+					</a>
+				</div>
+			</div>
+			<div class="col-lg-3 col-md-6">
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-mobile fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">@ViewBag.TotalProducts</div>
+								<div>Sản phẩm</div>
+							</div>
+						</div>
+					</div>
+					<a asp-area="Admin" asp-controller="Product" asp-action="Index">
+						<div class="panel-footer">
+							<span class="pull-left">Xem chi tiết</span>
+							<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+							<div class="clearfix"></div>
+						</div>
+					</a>
+				</div>
+			</div>
+			<div class="col-lg-3 col-md-6">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-users fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">@ViewBag.TotalUsers</div>
+								<div>Khách hàng</div>
+							</div>
+						</div>
+					</div>
+					<a asp-area="Admin" asp-controller="User" asp-action="Index">
+						<div class="panel-footer">
+							<span class="pull-left">Xem chi tiết</span>
+							<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+							<div class="clearfix"></div>
+						</div>
+					</a>
+				</div>
+			</div>
+			<div class="col-lg-3 col-md-6">
+				<div class="panel panel-danger">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-bar-chart fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">@ViewBag.TotalRevenue.ToString("N0")</div>
+								<div>Doanh thu (VNĐ)</div>
+							</div>
+						</div>
+					</div>
+					<a asp-area="Admin" asp-controller="Report" asp-action="Index">
+						<div class="panel-footer">
+							<span class="pull-left">Xem chi tiết</span>
+							<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+							<div class="clearfix"></div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- Recent Activity -->
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<i class="fa fa-clock-o fa-fw"></i> Đơn hàng gần đây
+					</div>
+					<div class="panel-body">
+						@if (ViewBag.RecentOrders != null && ViewBag.RecentOrders.Count > 0)
+						{
+							<div class="table-responsive">
+								<table class="table table-bordered table-hover table-striped">
+									<thead>
+										<tr>
+											<th>Mã ĐH</th>
+											<th>Ngày đặt</th>
+											<th>Tổng tiền</th>
+											<th>Trạng thái</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (var order in ViewBag.RecentOrders)
+										{
+											<tr>
+												<td>@order.order_id</td>
+												<td>@order.created_at.ToString("dd/MM/yyyy")</td>
+												<td>@order.total_amount.ToString("N0") VNĐ</td>
+												<td>
+													@if (order.shipping_status == "Pending")
+													{
+														<span class="label label-warning">Chờ xử lý</span>
+													}
+													else if (order.shipping_status == "Confirmed")
+													{
+														<span class="label label-info">Đã xác nhận</span>
+													}
+													else if (order.shipping_status == "Shipping")
+													{
+														<span class="label label-primary">Đang giao</span>
+													}
+													else if (order.shipping_status == "Completed")
+													{
+														<span class="label label-success">Hoàn thành</span>
+													}
+													else
+													{
+														<span class="label label-danger">Đã hủy</span>
+													}
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+						}
+						else
+						{
+							<p class="text-muted">Chưa có đơn hàng nào.</p>
+						}
+						<a asp-area="Admin" asp-controller="Order" asp-action="Index" class="btn btn-default btn-block">
+							Xem tất cả đơn hàng <i class="fa fa-arrow-circle-right"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<i class="fa fa-warning fa-fw"></i> Sản phẩm sắp hết hàng
+					</div>
+					<div class="panel-body">
+						@if (ViewBag.LowStockProducts != null && ViewBag.LowStockProducts.Count > 0)
+						{
+							<div class="table-responsive">
+								<table class="table table-bordered table-hover table-striped">
+									<thead>
+										<tr>
+											<th>Mã SP</th>
+											<th>Tên sản phẩm</th>
+											<th>Tồn kho</th>
+											<th>Trạng thái</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (var product in ViewBag.LowStockProducts)
+										{
+											<tr>
+												<td>@product.product_id</td>
+												<td>@product.product_name</td>
+												<td>
+													<span class="label label-danger">@product.stock_quantity</span>
+												</td>
+												<td>
+													@if (product.stock_quantity == 0)
+													{
+														<span class="text-danger"><i class="fa fa-times-circle"></i> Hết hàng</span>
+													}
+													else if (product.stock_quantity < 5)
+													{
+														<span class="text-danger"><i class="fa fa-warning"></i> Rất thấp</span>
+													}
+													else
+													{
+														<span class="text-warning"><i class="fa fa-warning"></i> Thấp</span>
+													}
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+						}
+						else
+						{
+							<p class="text-muted">Tất cả sản phẩm đều còn đủ hàng.</p>
+						}
+						<a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-default btn-block">
+							Xem tất cả sản phẩm <i class="fa fa-arrow-circle-right"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Welcome Message -->
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<i class="fa fa-info-circle"></i> Chào mừng đến với PhoneStore Admin
+					</div>
+					<div class="panel-body">
+						<p>Chào mừng bạn đến với trang quản trị PhoneStore. Từ đây bạn có thể:</p>
+						<ul>
+							<li>Quản lý sản phẩm, danh mục sản phẩm</li>
+							<li>Theo dõi và xử lý đơn hàng</li>
+							<li>Quản lý thông tin khách hàng</li>
+							<li>Xem báo cáo doanh thu và thống kê</li>
+							<li>Cấu hình cài đặt hệ thống</li>
+						</ul>
+						<p>Sử dụng menu bên trái để điều hướng đến các chức năng quản trị.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.panel-footer {
+		background-color: transparent;
+		border-top: 1px solid rgba(255, 255, 255, 0.3);
+	}
+	
+	.panel-footer a {
+		color: inherit;
+		text-decoration: none;
+	}
+	
+	.panel-footer a:hover {
+		background-color: rgba(0, 0, 0, 0.05);
+	}
+	
+	.huge {
+		font-size: 40px;
+		font-weight: bold;
+	}
+	
+	.panel-primary .panel-heading,
+	.panel-success .panel-heading,
+	.panel-info .panel-heading,
+	.panel-danger .panel-heading {
+		color: #fff;
+	}
+	
+	.panel-primary {
+		border-color: #3498db;
+	}
+	
+	.panel-primary > .panel-heading {
+		background-color: #3498db;
+		border-color: #3498db;
+	}
+	
+	.panel-danger {
+		border-color: #e74c3c;
+	}
+	
+	.panel-danger > .panel-heading {
+		background-color: #e74c3c;
+		border-color: #e74c3c;
+	}
+</style>

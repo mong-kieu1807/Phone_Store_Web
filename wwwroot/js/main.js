@@ -1,6 +1,20 @@
 (function($) {
 	"use strict"
 
+	// Hot Deal Slideshow
+	$('.hot-deal-slideshow').slick({
+		slidesToShow: 1,
+		slidesToScroll: 1,
+		autoplay: true,
+		infinite: true,
+		speed: 800,
+		fade: true,
+		cssEase: 'linear',
+		dots: true,
+		arrows: true,
+		autoplaySpeed: 5000,
+	});
+
 	// Mobile Nav toggle
 	$('.menu-toggle > a').on('click', function (e) {
 		e.preventDefault();

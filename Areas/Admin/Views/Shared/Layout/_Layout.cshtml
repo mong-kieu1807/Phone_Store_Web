@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="PhoneStore Admin Panel">
+	<meta name="author" content="">
+
+	<title>@ViewData["Title"] - PhoneStore Admin</title>
+
+	<!-- Bootstrap Core CSS -->
+	<link href="~/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- Font Awesome -->
+	<link href="~/css/font-awesome.min.css" rel="stylesheet">
+
+	<!-- Custom Admin CSS -->
+	<link href="~/admin/admin-style.css" rel="stylesheet">
+
+	<!-- Custom Styles -->
+	@RenderSection("Style", required: false)
+
+</head>
+
+<body>
+
+	<div id="wrapper">
+
+		<!-- Navigation -->
+		@await Html.PartialAsync("../Partials/_Navigation.cshtml")
+
+		<!-- Page Content -->
+		@RenderBody()
+
+	</div>
+	<!-- /#wrapper -->
+
+	<!-- jQuery -->
+	<script src="~/js/jquery.min.js"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="~/js/bootstrap.min.js"></script>
+
+	<!-- Custom Admin Scripts -->
+	<script src="~/admin/admin-app.js"></script>
+
+	<!-- Custom Scripts -->
+	@RenderSection("Scripts", required: false)
+</body>
+
+</html>

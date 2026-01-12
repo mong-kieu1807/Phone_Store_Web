@@ -9,9 +9,8 @@ namespace PhoneStore.Models
 		public int import_id { get; set; }                         
 		public int supplier_id { get; set; }                  
 		public int user_id { get; set; }                  
-		public double total_cost { get; set; } = 0.0;
-		public bool status { get; set; }
-        public DateTime created_at { get; set; } 
-
+		public decimal total_cost { get; set; } = 0;
+		public byte status { get; set; }
+        public DateTime? created_at { get; set; }
     }
 }

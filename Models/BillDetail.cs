@@ -6,11 +6,9 @@ namespace PhoneStore.Models
 {
 	public class BillDetail
 	{
-		[Key]
-		public int order_id { get; set; }                         // Khóa chính
-		[Key]
-		public int product_id { get; set; }                         // Mã người dùng (FK -> Users)
-		public int quantity { get; set; }               //Tổng tiền
-		public double price { get; set; }               // Số điện thoại liên hệ
+		public int order_id { get; set; }                         // Khóa chính (FK -> Bills)
+		public int product_id { get; set; }                       // Khóa chính (FK -> Products)
+		public int quantity { get; set; }                         // Số lượng
+	public decimal price { get; set; }                         // Giá tại thời điểm mua
     }
 }

@@ -1,0 +1,305 @@
+@model List<PhoneStore.Models.User>
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+}
+
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="header-section">
+                    <h1 class="page-header">
+                        <i class="fa fa-users"></i> Quản lý người dùng
+                    </h1>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm người dùng..." />
+                        <i class="fa fa-search"></i>
+                    </div>
+                    <div class="button-group">
+                        <button class="filter-btn sort-btn">
+                            <i class="fa fa-sort"></i> Sắp xếp
+                        </button>
+                        <button class="filter-btn">
+                            <i class="fa fa-filter"></i> Lọc
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-list"></i> Danh sách người dùng
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên đăng nhập</th>
+                                    <th>Họ tên</th>
+                                    <th>Email</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Vai trò</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model)
+                                {
+                                    <tr>
+                                        <td>@user.user_id</td>
+                                        <td>@(user.username ?? "N/A")</td>
+                                        <td>@(user.full_name ?? "N/A")</td>
+                                        <td>@(user.email ?? "N/A")</td>
+                                        <td>@(user.phone ?? "N/A")</td>
+                                        <td>
+                                            @if (user.role == "Admin")
+                                            {
+                                                <span class="label label-danger">Admin</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-primary">User</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (user.status == 1)
+                                            {
+                                                <span class="label label-success">Hoạt động</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-danger">Khóa</span>
+                                            }
+                                        </td>
+                                        <td>@(user.created_at?.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a asp-area="Admin" asp-controller="User" asp-action="Edit" asp-route-id="@user.user_id" class="btn btn-primary btn-sm">
+                                                    <i class="fa fa-edit"></i> Cập nhật
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser(@user.user_id)">
+                                                    <i class="fa fa-trash"></i> Xóa
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a class="floating-add-button" asp-area="Admin" asp-controller="User" asp-action="Create">
+        <i class="fa fa-plus"></i> Thêm người dùng
+    </a>
+</div>
+
+<style>
+    #page-wrapper {
+        margin-left: 220px;
+        padding: 20px;
+        min-height: 100vh;
+        background: #f8f9fa;
+    }
+
+    .header-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .page-header {
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    .search-box {
+        flex: 1;
+        max-width: 500px;
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 40px 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        font-size: 14px;
+        outline: none;
+        transition: all 0.3s;
+    }
+
+    .search-box input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    .search-box i {
+        position: absolute;
+        right: 15px;
+        color: #666;
+        pointer-events: none;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .filter-btn {
+        padding: 10px 20px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+        flex-shrink: 0;
+    }
+
+    .filter-btn:hover {
+        background: #0056b3;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .sort-btn {
+        background: #6c757d;
+    }
+
+    .sort-btn:hover {
+        background: #5a6268;
+    }
+
+    .btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s;
+    }
+
+    .btn-sm {
+        font-size: 13px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn-primary {
+        background: #FACC15;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #EAB308;
+        color: white;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+    }
+
+    .label {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 3px;
+        color: #fff;
+    }
+    .label-danger {
+        background-color: #e74c3c;
+    }
+    .label-primary {
+        background-color: #3498db;
+    }
+    .label-success {
+        background-color: #27ae60;
+    }
+
+    .floating-add-button {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #28a745;
+        color: #fff;
+        border-radius: 50px;
+        padding: 14px 24px;
+        font-weight: 600;
+        font-size: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        text-decoration: none;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 1000;
+    }
+
+    .floating-add-button:hover {
+        color: #fff;
+        background: #218838;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function deleteUser(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+                fetch('@Url.Action("Delete", "User", new { area = "Admin" })', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(id)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Có lỗi xảy ra: ' + error);
+                });
+            }
+        }
+    </script>
+}

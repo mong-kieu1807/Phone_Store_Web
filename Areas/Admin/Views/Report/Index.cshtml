@@ -1,0 +1,51 @@
+@{
+    ViewData["Title"] = "Báo cáo thống kê";
+}
+
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">
+                    <i class="fa fa-bar-chart"></i> Báo cáo thống kê
+                </h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <i class="fa fa-line-chart"></i> Doanh thu theo tháng
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="revenueChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <i class="fa fa-pie-chart"></i> Sản phẩm bán chạy
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="productChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <i class="fa fa-table"></i> Báo cáo chi tiết
+                    </div>
+                    <div class="panel-body">
+                        <p class="text-muted">Chức năng báo cáo đang được phát triển...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

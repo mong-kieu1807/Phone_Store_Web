@@ -7,11 +7,10 @@ namespace PhoneStore.Models
 	{
 		[Key]
 		public int category_id { get; set; }                         
-		public string category_name { get; set; } = " ";
-		public string description { get; set; } = " ";
-		public bool status { get; set; }
-        public DateTime created_at { get; set; } 
-        public DateTime updated_at { get; set; } 
-
+	public string? category_name { get; set; }
+	public string? description { get; set; }
+	public byte status { get; set; }
+        public DateTime? created_at { get; set; } 
+        public DateTime? updated_at { get; set; }
     }
 }

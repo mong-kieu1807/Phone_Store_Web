@@ -33,7 +33,19 @@ public class HomeController : Controller
                 .Where(p => p.status == 1)
                 .OrderByDescending(p => p.sold_count)
                 .Take(10)
-                .ToListAsync()
+                .ToListAsync(),
+            // Lấy sản phẩm giảm giá tốt nhất
+            HotDeals = await _context.Products
+                .Where(p => p.status == 1)
+                .OrderByDescending(p => p.discount_percent)
+                .Take(10)
+                .ToListAsync(),
+            // Lấy sản phẩm bán chạy nhất
+            TopRating = await _context.Products
+                .Where(p => p.status == 1)
+                .OrderByDescending(p => p.rating)
+                .Take(10)
+                .ToListAsync(),
         };
         
         _logger.LogInformation($"Found {viewModel.NewProducts.Count} new products");

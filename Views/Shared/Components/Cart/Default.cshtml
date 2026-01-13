@@ -1,0 +1,49 @@
+﻿@model List<PhoneStore.Models.CartItem>
+
+<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+    <i class="fa fa-shopping-cart"></i>
+    <span>Giỏ hàng</span>
+    <div class="qty">@(Model?.Sum(x => x.Quantity) ?? 0)</div>
+</a>
+
+<div class="cart-dropdown">
+    <div class="cart-list">
+        @if (Model != null && Model.Count > 0)
+        {
+            @foreach (var item in Model)
+            {
+                        <div class="product-widget">
+                            <div class="product-img">
+                                <img src="~/img/@item.Image" alt="@item.ProductName" onerror="this.src='/img/no-image.png'">
+                            </div>
+                            <div class="product-body">
+                                <h3 class="product-name"><a href="#">@item.ProductName</a></h3>
+                                <h4 class="product-price">
+                                    <span class="qty">@item.Quantity x</span>
+                            @item.Price.ToString("n0") đ
+                                </h4>
+                            </div>
+                            <a asp-controller="Order" asp-action="RemoveFromCart" asp-route-id="@item.ProductId" class="delete">
+                                <i class="fa fa-close"></i>
+                            </a>
+                        </div>
+            }
+        }
+        else
+        {
+                <div style="text-align:center; padding: 15px;">
+                    <p>Giỏ hàng trống</p>
+                </div>
+        }
+    </div>
+
+    <div class="cart-summary">
+        <small>@(Model?.Sum(x => x.Quantity) ?? 0) Item(s) selected</small>
+        <h5>SUBTOTAL: @(Model?.Sum(x => x.Total).ToString("n0") ?? "0") đ</h5>
+    </div>
+
+    <div class="cart-btns">
+        <a asp-controller="Order" asp-action="Cart">View Cart</a>
+        <a asp-controller="Order" asp-action="Checkout">Checkout <i class="fa fa-arrow-circle-right"></i></a>
+    </div>
+</div>

@@ -30,5 +30,6 @@ namespace PhoneStore.Data
             modelBuilder.Entity<BillDetail>()
                 .HasKey(bd => new { bd.order_id, bd.product_id });
         }
+
     }
 }

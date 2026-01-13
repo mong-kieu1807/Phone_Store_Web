@@ -1,0 +1,207 @@
+﻿@model List<PhoneStore.Models.Product>
+@{
+    ViewData["Title"] = "Danh mục sản phẩm";
+    var categories = ViewBag.Categories as List<PhoneStore.Models.Category>;
+    var selectedCategoryId = ViewBag.SelectedCategoryId as int?;
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+    var totalProducts = ViewBag.TotalProducts ?? 0;
+    var pageSize = ViewBag.PageSize ?? 9;
+    
+    // Tính toán range hiển thị
+    var startItem = (currentPage - 1) * pageSize + 1;
+    var endItem = Math.Min(currentPage * pageSize, totalProducts);
+}
+
+<!-- SECTION: Product List with Filter -->
+<div class="section">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+
+            <!-- ASIDE: Category Sidebar -->
+            <div id="aside" class="col-md-3">
+
+                <!-- Categories Filter -->
+                <div class="aside">
+                    <h3 class="aside-title">Danh mục sản phẩm</h3>
+                    <div class="checkbox-filter">
+                        <div class="input-checkbox">
+                            <input type="radio" id="category-all" name="category" @(!selectedCategoryId.HasValue ? "checked" : "") onchange="location.href='@Url.Action("Index", "Category")'">
+                            <label for="category-all">
+                                <span></span>Tất cả sản phẩm
+                            </label>
+                        </div>
+                        @if (categories != null)
+                        {
+                            int idx = 0;
+                            foreach (var category in categories)
+                            {
+                                idx++;
+                                <div class="input-checkbox">
+                                    <input type="radio" id="category-@idx" name="category" @(selectedCategoryId == category.category_id ? "checked" : "") onchange="location.href='@Url.Action("Index", "Category", new { categoryId = category.category_id })'">
+                                    <label for="category-@idx">
+                                        <span></span>@category.category_name
+                                    </label>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+            </div>
+            <!-- /ASIDE -->
+
+            <!-- STORE: Main Product Grid -->
+            <div id="store" class="col-md-9">
+
+                <!-- Product Grid -->
+                <div class="row">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var product in Model)
+                        {
+                            var discountedPrice = product.discount_percent > 0 
+                                ? product.price * (1 - product.discount_percent / 100m) 
+                                : product.price;
+                            
+                            <div class="col-md-4 col-xs-6">
+                                <div class="product">
+                                    <div class="product-img">
+                                        <img src="~/img/@product.image" alt="@product.product_name">
+                                        @if (product.discount_percent > 0)
+                                        {
+                                            <div class="product-label">
+                                                <span class="sale">-@product.discount_percent%</span>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="product-body">
+                                        <p class="product-category">@product.brand</p>
+                                        <h3 class="product-name">
+                                            <a href="@Url.Action("Details", "Product", new { id = product.product_id })">
+                                                @product.product_name
+                                            </a>
+                                        </h3>
+                                        <h4 class="product-price">
+                                            @discountedPrice.ToString("N0") đ
+                                            @if (product.discount_percent > 0)
+                                            {
+                                                <del class="product-old-price">@product.price.ToString("N0") đ</del>
+                                            }
+                                        </h4>
+                                        <div class="product-rating">
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star-o"></i>
+                                        </div>
+                                        <div class="product-btns">
+                                            <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
+                                            <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">So sánh</span></button>
+                                            <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">Xem nhanh</span></button>
+                                        </div>
+                                    </div>
+                                    <div class="add-to-cart">
+                                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-md-12">
+                            <div class="alert alert-info">
+                                <p>Không có sản phẩm nào trong danh mục này.</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <!-- /Product Grid -->
+
+                <!-- Store Bottom Filter -->
+                @if (Model != null && Model.Any())
+                {
+                    <div class="store-filter clearfix">
+                        <span class="store-qty">Hiển thị @startItem-@endItem trong @totalProducts sản phẩm</span>
+                        <ul class="store-pagination">
+                            @if (totalPages > 1)
+                            {
+                                // Nút Previous
+                                if (currentPage > 1)
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Index", "Category", new { categoryId = selectedCategoryId, page = currentPage - 1 })">
+                                            <i class="fa fa-angle-left"></i>
+                                        </a>
+                                    </li>
+                                }
+                                
+                                // Logic hiển thị các trang
+                                var startPage = Math.Max(1, currentPage - 2);
+                                var endPage = Math.Min(totalPages, currentPage + 2);
+                                
+                                // Hiển thị trang đầu nếu cần
+                                if (startPage > 1)
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Index", "Category", new { categoryId = selectedCategoryId, page = 1 })">1</a>
+                                    </li>
+                                    if (startPage > 2)
+                                    {
+                                        <li><span>...</span></li>
+                                    }
+                                }
+                                
+                                // Hiển thị các trang
+                                for (int i = startPage; i <= endPage; i++)
+                                {
+                                    if (i == currentPage)
+                                    {
+                                        <li class="active">@i</li>
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("Index", "Category", new { categoryId = selectedCategoryId, page = i })">@i</a>
+                                        </li>
+                                    }
+                                }
+                                
+                                // Hiển thị trang cuối nếu cần
+                                if (endPage < totalPages)
+                                {
+                                    if (endPage < totalPages - 1)
+                                    {
+                                        <li><span>...</span></li>
+                                    }
+                                    <li>
+                                        <a href="@Url.Action("Index", "Category", new { categoryId = selectedCategoryId, page = totalPages })">@totalPages</a>
+                                    </li>
+                                }
+                                
+                                // Nút Next
+                                if (currentPage < totalPages)
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Index", "Category", new { categoryId = selectedCategoryId, page = currentPage + 1 })">
+                                            <i class="fa fa-angle-right"></i>
+                                        </a>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                }
+                <!-- /Store Bottom Filter -->
+            </div>
+            <!-- /STORE -->
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</div>
+<!-- /SECTION -->

@@ -56,9 +56,31 @@ public class ProductController : Controller
         return View(products);
     }
 
-    public IActionResult Details()
+    public async Task<IActionResult> Details(int id)
     {
-        return View();
+        // Lấy thông tin sản phẩm theo ID
+        var product = await _context.Products
+            .FirstOrDefaultAsync(p => p.product_id == id && p.status == 1);
+
+        // Nếu không tìm thấy sản phẩm, trả về 404
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        // Lấy sản phẩm liên quan (cùng brand hoặc cùng category, khác product_id)
+        var relatedProducts = await _context.Products
+            .Where(p => p.status == 1 
+                     && p.product_id != id 
+                     && (p.brand == product.brand || p.category_id == product.category_id))
+            .OrderByDescending(p => p.created_at)
+            .Take(4)
+            .ToListAsync();
+
+        // Truyền dữ liệu vào ViewBag
+        ViewBag.RelatedProducts = relatedProducts;
+
+        return View(product);
     }
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

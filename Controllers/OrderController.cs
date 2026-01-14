@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿//NTBinh 14/01/2026
+using Microsoft.AspNetCore.Mvc;
 using PhoneStore.Models;
 using PhoneStore.Data;
 using Microsoft.EntityFrameworkCore; // Cần cái này để dùng FindAsync
@@ -33,9 +34,9 @@ namespace PhoneStore.Controllers
             session.SetString("GioHang", json);
         }
 
-        // ------------------------------------------------------------------
+        
         // ACTION 1: THÊM VÀO GIỎ (Kết nối Database thật để lấy thông tin SP)
-        // ------------------------------------------------------------------
+        
         public async Task<IActionResult> AddToCart(int id)
         {
             // 1. TRUY VẤN DỮ LIỆU THẬT TỪ SQL
@@ -60,10 +61,10 @@ namespace PhoneStore.Controllers
                 // Mapping: Lấy dữ liệu thật từ biến 'product' đổ vào giỏ
                 gioHang.Add(new CartItem
                 {
-                    ProductId = product.product_id,     // Lấy từ cột product_id (SQL)
-                    ProductName = product.product_name, // Lấy từ cột product_name (SQL)
-                    Price = product.price,              // Lấy từ cột price (SQL)
-                    Image = product.image,              // Lấy từ cột image (SQL)
+                    ProductId = product.product_id,     
+                    ProductName = product.product_name, 
+                    Price = product.price,              
+                    Image = product.image,              
                     Quantity = 1
                 });
             }
@@ -108,9 +109,7 @@ namespace PhoneStore.Controllers
             return RedirectToAction("Cart");
         }
 
-        // ------------------------------------------------------------------
         // ACTION 2: HIỂN THỊ GIỎ HÀNG (Lấy dữ liệu thật từ Session)
-        // ------------------------------------------------------------------
         public IActionResult Cart()
         {
             var gioHang = LayGioHang();
@@ -121,9 +120,8 @@ namespace PhoneStore.Controllers
             return View(gioHang);
         }
 
-        // ------------------------------------------------------------------
         // ACTION 3: XÓA SẢN PHẨM
-        // ------------------------------------------------------------------
+        
         public IActionResult RemoveFromCart(int id)
         {
             var gioHang = LayGioHang();
@@ -137,9 +135,8 @@ namespace PhoneStore.Controllers
             return RedirectToAction("Cart");
         }
 
-        // ------------------------------------------------------------------
+        
         // ACTION 4: TRANG THANH TOÁN (Checkout)
-        // ------------------------------------------------------------------
         public IActionResult Checkout()
         {
             var gioHang = LayGioHang();
@@ -150,9 +147,7 @@ namespace PhoneStore.Controllers
             return View(gioHang);
         }
 
-        // ------------------------------------------------------------------
         // ACTION 5: XỬ LÝ ĐẶT HÀNG (Lưu vào Database thật: Bills, Bill_Details)
-        // ------------------------------------------------------------------
         [HttpPost]
         public async Task<IActionResult> PlaceOrder(string FullName, string Phone, string Address, string Note)
         {

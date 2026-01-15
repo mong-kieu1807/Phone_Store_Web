@@ -1,6 +1,7 @@
 @model PhoneStore.Models.Product
 
 @functions {
+    // chuyển chuỗi hình ảnh thành danh sách hình
     public List<string> GetImages(string imageString)
     {
         if (string.IsNullOrEmpty(imageString))
@@ -17,8 +18,14 @@
     ViewData["Title"] = Model.product_name;
     Layout = "~/Views/Shared/Layout/_Layout.cshtml";
     
+    // Lấy danh sách hình ảnh
     var images = GetImages(Model.image);
+    
+    // Tính giá sau khi giảm
     var discountedPrice = Model.price * (100 - Model.discount_percent) / 100;
+    
+    // Lấy danh sách sản phẩm liên quan
+    List<PhoneStore.Models.Product> relatedProducts = ViewBag.RelatedProducts ?? new List<PhoneStore.Models.Product>();
 }
 <!-- SECTION -->
 <div class="section">
@@ -377,35 +384,40 @@
                 </div>
             </div>
 
-            @if (ViewBag.RelatedProducts != null && ViewBag.RelatedProducts.Count > 0)
+            @if (relatedProducts != null && relatedProducts.Count > 0)
             {
-                @foreach (var item in ViewBag.RelatedProducts)
+                @foreach (var product in relatedProducts)
                 {
-                    var relatedDiscountedPrice = item.price * (100 - item.discount_percent) / 100;
+                    // Tính giá sau giảm cho sản phẩm liên quan
+                    var productPrice = product.price * (100 - product.discount_percent) / 100;
+                    
+                    // Lấy ảnh đầu tiên của sản phẩm
+                    var productImage = GetImages(product.image)[0];
+                    
                     <!-- product -->
                     <div class="col-md-3 col-xs-6">
                         <div class="product">
                             <div class="product-img">
-                                <img src="~/img/@GetImages(item.image)[0]" alt="@item.product_name">
-                                @if (item.discount_percent > 0)
+                                <img src="~/img/@productImage" alt="@product.product_name">
+                                @if (product.discount_percent > 0)
                                 {
                                     <div class="product-label">
-                                        <span class="sale">-@item.discount_percent%</span>
+                                        <span class="sale">-@product.discount_percent%</span>
                                     </div>
                                 }
                             </div>
                             <div class="product-body">
-                                <p class="product-category">@item.brand</p>
+                                <p class="product-category">@product.brand</p>
                                 <h3 class="product-name">
-                                    <a asp-controller="Product" asp-action="Details" asp-route-id="@item.product_id">
-                                        @item.product_name
+                                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.product_id">
+                                        @product.product_name
                                     </a>
                                 </h3>
                                 <h4 class="product-price">
-                                    @relatedDiscountedPrice.ToString("N0") VND
-                                    @if (item.discount_percent > 0)
+                                    @productPrice.ToString("N0") VND
+                                    @if (product.discount_percent > 0)
                                     {
-                                        <del class="product-old-price">@item.price.ToString("N0") VND</del>
+                                        <del class="product-old-price">@product.price.ToString("N0") VND</del>
                                     }
                                 </h4>
                                 <div class="product-rating">

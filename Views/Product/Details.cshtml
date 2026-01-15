@@ -1,28 +1,45 @@
-@{
-    ViewData["Title"] = "Product Detail";
-    Layout = "~/Views/Shared/Layout/_Layout.cshtml";
+@model PhoneStore.Models.Product
+
+@functions {
+    // chuyển chuỗi hình ảnh thành danh sách hình
+    public List<string> GetImages(string imageString)
+    {
+        if (string.IsNullOrEmpty(imageString))
+        {
+            return new List<string> { "default.png" };
+        }
+        return imageString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                          .Select(img => img.Trim())
+                          .ToList();
+    }
 }
 
+@{
+    ViewData["Title"] = Model.product_name;
+    Layout = "~/Views/Shared/Layout/_Layout.cshtml";
+    
+    // Lấy danh sách hình ảnh
+    var images = GetImages(Model.image);
+    
+    // Tính giá sau khi giảm
+    var discountedPrice = Model.price * (100 - Model.discount_percent) / 100;
+    
+    // Lấy danh sách sản phẩm liên quan
+    List<PhoneStore.Models.Product> relatedProducts = ViewBag.RelatedProducts ?? new List<PhoneStore.Models.Product>();
+}
 <!-- SECTION -->
 <div class="section">
     <div class="container">
         <div class="row">
-
             <!-- Product main img -->
             <div class="col-md-5 col-md-push-2">
                 <div id="product-main-img">
-                    <div class="product-preview">
-                        <img src="~/img/product01.png" alt="">
-                    </div>
-                    <div class="product-preview">
-                        <img src="~/img/product03.png" alt="">
-                    </div>
-                    <div class="product-preview">
-                        <img src="~/img/product06.png" alt="">
-                    </div>
-                    <div class="product-preview">
-                        <img src="~/img/product08.png" alt="">
-                    </div>
+                    @foreach (var img in images)
+                    {
+                        <div class="product-preview">
+                            <img src="~/img/@img" alt="@Model.product_name">
+                        </div>
+                    }
                 </div>
             </div>
             <!-- /Product main img -->
@@ -30,18 +47,12 @@
             <!-- Product thumb imgs -->
             <div class="col-md-2 col-md-pull-5">
                 <div id="product-imgs">
-                    <div class="product-preview">
-                        <img src="~/img/product01.png" alt="">
-                    </div>
-                    <div class="product-preview">
-                        <img src="~/img/product03.png" alt="">
-                    </div>
-                    <div class="product-preview">
-                        <img src="~/img/product06.png" alt="">
-                    </div>
-                    <div class="product-preview">
-                        <img src="~/img/product08.png" alt="">
-                    </div>
+                    @foreach (var img in images)
+                    {
+                        <div class="product-preview">
+                            <img src="~/img/@img" alt="@Model.product_name">
+                        </div>
+                    }
                 </div>
             </div>
             <!-- /Product thumb imgs -->
@@ -49,7 +60,7 @@
             <!-- Product details -->
             <div class="col-md-5">
                 <div class="product-details">
-                    <h2 class="product-name">product name goes here</h2>
+                    <h2 class="product-name">@Model.product_name</h2>
                     <div>
                         <div class="product-rating">
                             <i class="fa fa-star"></i>
@@ -61,26 +72,29 @@
                         <a class="review-link" href="#">10 Review(s) | Add your review</a>
                     </div>
                     <div>
-                        <h3 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h3>
-                        <span class="product-available">In Stock</span>
+                        <h3 class="product-price">
+                            @discountedPrice.ToString("N0") VND
+                            @if (Model.discount_percent > 0)
+                            {
+                                <del class="product-old-price">@Model.price.ToString("N0") VND</del>
+                            }
+                        </h3>
+                        <span class="product-available">
+                            @if (Model.stock_quantity > 0)
+                            {
+                                <span>In Stock (@Model.stock_quantity available)</span>
+                            }
+                            else
+                            {
+                                <span style="color: red;">Out of Stock</span>
+                            }
+                        </span>
                     </div>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                        laboris nisi ut aliquip ex ea commodo consequat.
-                    </p>
+                    <p>@Model.description</p>
 
                     <div class="product-options">
                         <label>
-                            Size
-                            <select class="input-select">
-                                <option value="0">X</option>
-                            </select>
-                        </label>
-                        <label>
-                            Color
-                            <select class="input-select">
-                                <option value="0">Red</option>
-                            </select>
+                            Brand: <strong>@Model.brand</strong>
                         </label>
                     </div>
 
@@ -88,12 +102,14 @@
                         <div class="qty-label">
                             Qty
                             <div class="input-number">
-                                <input type="number">
+                                <input type="number" value="1" min="1" max="@Model.stock_quantity">
                                 <span class="qty-up">+</span>
                                 <span class="qty-down">-</span>
                             </div>
                         </div>
-                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                        <button class="add-to-cart-btn" @(Model.stock_quantity <= 0 ? "disabled" : "")>
+                            <i class="fa fa-shopping-cart"></i> add to cart
+                        </button>
                     </div>
 
                     <ul class="product-btns">
@@ -103,8 +119,7 @@
 
                     <ul class="product-links">
                         <li>Category:</li>
-                        <li><a href="#">Headphones</a></li>
-                        <li><a href="#">Accessories</a></li>
+                        <li><a href="#">@Model.brand</a></li>
                     </ul>
 
                     <ul class="product-links">
@@ -136,12 +151,7 @@
                         <div id="tab1" class="tab-pane fade in active">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-                                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                                        nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                                        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                                        culpa qui officia deserunt mollit anim id est laborum.</p>
+                                    <p>@Model.description</p>
                                 </div>
                             </div>
                         </div>
@@ -151,12 +161,18 @@
                         <div id="tab2" class="tab-pane fade in">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-                                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                                        nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                                        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                                        culpa qui officia deserunt mollit anim id est laborum.</p>
+                                    <h4>Product Specifications</h4>
+                                    <ul>
+                                        <li><strong>Brand:</strong> @Model.brand</li>
+                                        <li><strong>Product Name:</strong> @Model.product_name</li>
+                                        <li><strong>Price:</strong> @Model.price.ToString("N0") VND</li>
+                                        @if (Model.discount_percent > 0)
+                                        {
+                                            <li><strong>Discount:</strong> @Model.discount_percent%</li>
+                                            <li><strong>Discounted Price:</strong> @discountedPrice.ToString("N0") VND</li>
+                                        }
+                                        <li><strong>Available Quantity:</strong> @Model.stock_quantity</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -368,135 +384,69 @@
                 </div>
             </div>
 
-            <!-- product -->
-            <div class="col-md-3 col-xs-6">
-                <div class="product">
-                    <div class="product-img">
-                        <img src="~/img/product01.png" alt="">
-                        <div class="product-label">
-                            <span class="sale">-30%</span>
+            @if (relatedProducts != null && relatedProducts.Count > 0)
+            {
+                @foreach (var product in relatedProducts)
+                {
+                    // Tính giá sau giảm cho sản phẩm liên quan
+                    var productPrice = product.price * (100 - product.discount_percent) / 100;
+                    
+                    // Lấy ảnh đầu tiên của sản phẩm
+                    var productImage = GetImages(product.image)[0];
+                    
+                    <!-- product -->
+                    <div class="col-md-3 col-xs-6">
+                        <div class="product">
+                            <div class="product-img">
+                                <img src="~/img/@productImage" alt="@product.product_name">
+                                @if (product.discount_percent > 0)
+                                {
+                                    <div class="product-label">
+                                        <span class="sale">-@product.discount_percent%</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="product-body">
+                                <p class="product-category">@product.brand</p>
+                                <h3 class="product-name">
+                                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.product_id">
+                                        @product.product_name
+                                    </a>
+                                </h3>
+                                <h4 class="product-price">
+                                    @productPrice.ToString("N0") VND
+                                    @if (product.discount_percent > 0)
+                                    {
+                                        <del class="product-old-price">@product.price.ToString("N0") VND</del>
+                                    }
+                                </h4>
+                                <div class="product-rating">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-o"></i>
+                                </div>
+                                <div class="product-btns">
+                                    <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
+                                    <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
+                                    <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+                                </div>
+                            </div>
+                            <div class="add-to-cart">
+                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                        <div class="product-rating">
-                        </div>
-                        <div class="product-btns">
-                            <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to
-                                    wishlist</span></button>
-                            <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to
-                                    compare</span></button>
-                            <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick
-                                    view</span></button>
-                        </div>
-                    </div>
-                    <div class="add-to-cart">
-                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                    </div>
+                    <!-- /product -->
+                }
+            }
+            else
+            {
+                <div class="col-md-12">
+                    <p class="text-center">No related products found.</p>
                 </div>
-            </div>
-            <!-- /product -->
-
-            <!-- product -->
-            <div class="col-md-3 col-xs-6">
-                <div class="product">
-                    <div class="product-img">
-                        <img src="~/img/product02.png" alt="">
-                        <div class="product-label">
-                            <span class="new">NEW</span>
-                        </div>
-                    </div>
-                    <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                        <div class="product-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product-btns">
-                            <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to
-                                    wishlist</span></button>
-                            <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to
-                                    compare</span></button>
-                            <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick
-                                    view</span></button>
-                        </div>
-                    </div>
-                    <div class="add-to-cart">
-                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                    </div>
-                </div>
-            </div>
-            <!-- /product -->
-
-            <div class="clearfix visible-sm visible-xs"></div>
-
-            <!-- product -->
-            <div class="col-md-3 col-xs-6">
-                <div class="product">
-                    <div class="product-img">
-                        <img src="~/img/product03.png" alt="">
-                    </div>
-                    <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                        <div class="product-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star-o"></i>
-                        </div>
-                        <div class="product-btns">
-                            <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to
-                                    wishlist</span></button>
-                            <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to
-                                    compare</span></button>
-                            <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick
-                                    view</span></button>
-                        </div>
-                    </div>
-                    <div class="add-to-cart">
-                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                    </div>
-                </div>
-            </div>
-            <!-- /product -->
-
-            <!-- product -->
-            <div class="col-md-3 col-xs-6">
-                <div class="product">
-                    <div class="product-img">
-                        <img src="~/img/product04.png" alt="">
-                    </div>
-                    <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                        <div class="product-rating">
-                        </div>
-                        <div class="product-btns">
-                            <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to
-                                    wishlist</span></button>
-                            <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to
-                                    compare</span></button>
-                            <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick
-                                    view</span></button>
-                        </div>
-                    </div>
-                    <div class="add-to-cart">
-                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                    </div>
-                </div>
-            </div>
-            <!-- /product -->
+            }
 
         </div>
     </div>

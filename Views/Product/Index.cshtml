@@ -4,13 +4,19 @@
 
     int currentPage = ViewBag.CurrentPage ?? 1;
     int totalPages  = ViewBag.TotalPages ?? 1;
-    int pageSize    = ViewBag.PageSize ?? 3;
+    int pageSize    = ViewBag.PageSize ?? 6;
+    decimal minPrice = ViewBag.MinPrice ?? 0m;          
+    decimal maxPrice = ViewBag.MaxPrice ?? 50000000m;  
 
     int maxPagesToShow = 5; //số trang hiển thị tối đa
     int sort = ViewBag.Sort ?? 0; //trạng thái sắp xếp
 
     int startPage = Math.Max(1, currentPage - 2);
     int endPage   = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+
+    var categories = ViewBag.Categories as List<PhoneStore.Models.Category>;
+    var selectedCategoryIds = ViewBag.SelectedCategoryIds as List<int> ?? new();
+    var topSellingProducts = ViewBag.TopSellingProducts as List<PhoneStore.Models.Product>;
 
     if (endPage - startPage < maxPagesToShow - 1)
     {
@@ -44,23 +50,24 @@
                 <div class="aside">
                     <h3 class="aside-title">Categories</h3>
                     <div class="checkbox-filter">
-                        <div class="input-checkbox">
-                            <input type="checkbox" id="category-1">
-                            <label for="category-1"><span></span>Laptops <small>(120)</small></label>
-                        </div>
-                        <div class="input-checkbox">
-                            <input type="checkbox" id="category-2">
-                            <label for="category-2"><span></span>Smartphones <small>(740)</small></label>
-                        </div>
-                        <div class="input-checkbox">
-                            <input type="checkbox" id="category-3">
-                            <label for="category-3"><span></span>Cameras <small>(1450)</small></label>
-                        </div>
-                        <div class="input-checkbox">
-                            <input type="checkbox" id="category-4">
-                            <label for="category-4"><span></span>Accessories <small>(578)</small></label>
-                        </div>
-                        <!-- Thêm các category khác nếu cần -->
+                        @if (categories != null)
+                        {
+                            foreach (var category in categories)
+                            {
+                                var isChecked = selectedCategoryIds.Contains(category.category_id);
+                                <div class="input-checkbox">
+                                    <input type="checkbox"
+                                        id="category-@category.category_id"
+                                        @(isChecked ? "checked" : "")
+                                        onchange="applyCategoryFilter()" />
+
+                                    <label for="category-@category.category_id">
+                                        <span></span>
+                                        @category.category_name
+                                    </label>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
 
@@ -68,68 +75,80 @@
                 <div class="aside">
                     <h3 class="aside-title">Price</h3>
                     <div class="price-filter">
-                        <div id="price-slider"></div>
                         <div class="input-number price-min">
-                            <input id="price-min" type="number">
-                            <span class="qty-up">+</span>
-                            <span class="qty-down">-</span>
+                            <input id="price-min" type="text"  style="width:100%;padding:6px 8px;font-size:13px;text-align:center" value="@minPrice.ToString("N0")">
                         </div>
                         <span>-</span>
                         <div class="input-number price-max">
-                            <input id="price-max" type="number">
-                            <span class="qty-up">+</span>
-                            <span class="qty-down">-</span>
+                            <input id="price-max" type="text"  style="width:100%;padding:6px 8px;font-size:13px;text-align:center" value="@maxPrice.ToString("N0")">
                         </div>
+                        <button class="primary-btn"
+                                style="margin-top:10px;width:100%"
+                                onclick="applyPriceFilter()">
+                            Apply
+                        </button>
                     </div>
                 </div>
 
                 <!-- Brand Filter -->
-                <div class="aside">
-                    <h3 class="aside-title">Brand</h3>
-                    <div class="checkbox-filter">
-                        <div class="input-checkbox">
-                            <input type="checkbox" id="brand-1">
-                            <label for="brand-1"><span></span>SAMSUNG <small>(578)</small></label>
+                    @* <div class="aside">
+                        <h3 class="aside-title">Brand</h3>
+                        <div class="checkbox-filter">
+                            <div class="input-checkbox">
+                                <input type="checkbox" id="brand-1">
+                                <label for="brand-1"><span></span>SAMSUNG <small>(578)</small></label>
+                            </div>
+                            <div class="input-checkbox">
+                                <input type="checkbox" id="brand-2">
+                                <label for="brand-2"><span></span>LG <small>(125)</small></label>
+                            </div>
+                            <div class="input-checkbox">
+                                <input type="checkbox" id="brand-3">
+                                <label for="brand-3"><span></span>SONY <small>(755)</small></label>
+                            </div>
+                            <!-- Thêm brand khác nếu cần -->
                         </div>
-                        <div class="input-checkbox">
-                            <input type="checkbox" id="brand-2">
-                            <label for="brand-2"><span></span>LG <small>(125)</small></label>
-                        </div>
-                        <div class="input-checkbox">
-                            <input type="checkbox" id="brand-3">
-                            <label for="brand-3"><span></span>SONY <small>(755)</small></label>
-                        </div>
-                        <!-- Thêm brand khác nếu cần -->
-                    </div>
-                </div>
+                    </div> *@
 
                 <!-- Top Selling Widget (trong sidebar) -->
                 <div class="aside">
                     <h3 class="aside-title">Top selling</h3>
-                    <div class="product-widget">
-                        <div class="product-img"><img src="/img/product01.png" alt=""></div>
-                        <div class="product-body">
-                            <p class="product-category">Category</p>
-                            <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                            <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                        </div>
-                    </div>
-                    <div class="product-widget">
-                        <div class="product-img"><img src="/img/product02.png" alt=""></div>
-                        <div class="product-body">
-                            <p class="product-category">Category</p>
-                            <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                            <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                        </div>
-                    </div>
-                    <div class="product-widget">
-                        <div class="product-img"><img src="/img/product03.png" alt=""></div>
-                        <div class="product-body">
-                            <p class="product-category">Category</p>
-                            <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                            <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                        </div>
-                    </div>
+                    @if (topSellingProducts != null && topSellingProducts.Any())
+                    {
+                        foreach (var product in topSellingProducts)
+                        {
+                            var finalPrice = product.discount_percent > 0
+                            ? product.price * (100 - product.discount_percent) 
+                            / 100 : product.price;
+
+                            <div class="product-widget">
+                                <div class="product-img">
+                                    <img src="~/img/@GetFirstImage(product.image)" alt="@product.product_name">
+                                </div>
+                                <div class="product-body">
+                                    <p class="product-category">@product.brand</p>
+                                    <h3 class="product-name">
+                                        <a asp-controller="Product"asp-action="Details"asp-route-id="@product.product_id">
+                                            @product.product_name
+                                        </a>
+                                    </h3>
+                                    <h4 class="product-price">
+                                        @finalPrice.ToString("N0") VND
+                                        @if (product.discount_percent > 0)
+                                        {
+                                            <del class="product-old-price">
+                                                @product.price.ToString("N0") VND
+                                            </del>
+                                        }
+                                    </h4>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No top selling products</p>
+                    }
                 </div>
                 <!-- /Top Selling Widget -->
 
@@ -144,8 +163,13 @@
                        <label>
                             Sort By:
                             <select class="input-select"
-                                    data-url="@Url.Action("Index","Product")"
-                                    onchange="location.href =this.dataset.url +'?page=1&pageSize=@pageSize&sort=' + this.value;">
+                                onchange="location.href='@Url.Action("Index","Product")'
+                                + '?page=1'
+                                + '&pageSize=@pageSize'
+                                + '&sort=' + this.value
+                                + '&categoryIds=@ViewBag.CategoryIds'
+                                + '&minPrice=@ViewBag.MinPrice'
+                                + '&maxPrice=@ViewBag.MaxPrice'">
                                     
                                 @if (sort == 0){
                                     <option value="0" selected>Popular</option>
@@ -172,8 +196,14 @@
                         <label>
                             Show:
                             <select class="input-select"
-                                    data-url="@Url.Action("Index","Product")"
-                                    onchange="location.href = this.dataset.url + '?page=1&pageSize=' + this.value;">
+                                onchange="location.href='@Url.Action("Index","Product")'
+                                + '?page=1'
+                                + '&pageSize=' + this.value
+                                + '&sort=@sort'
+                                + '&categoryIds=@ViewBag.CategoryIds'
+                                + '&minPrice=@ViewBag.MinPrice'
+                                + '&maxPrice=@ViewBag.MaxPrice'">
+
                                 @if (pageSize == 3){
                                     <option value="3" selected>3</option>
                                 }
@@ -252,7 +282,7 @@
                         @if (currentPage > 1)
                         {
                             <li>
-                                <a href="@Url.Action("Index","Product",new { page = currentPage - 1, pageSize, sort })">
+                                <a href="@Url.Action("Index","Product",new { page = currentPage - 1, pageSize, sort, categoryIds = ViewBag.CategoryIds, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice })">
                                     <i class="fa fa-angle-left"></i>
                                 </a>
                             </li>
@@ -261,7 +291,7 @@
                         @if (startPage > 1)
                         {
                             <li>
-                                <a href="@Url.Action("Index","Product", new { page = 1, pageSize, sort })">1</a>
+                                <a href="@Url.Action("Index","Product", new { page = 1, pageSize, sort, categoryIds = ViewBag.CategoryIds, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice })">1</a>
                             </li>
                             <li class="disabled"><span>...</span></li>
                         }
@@ -269,7 +299,7 @@
                         @for (int i = startPage; i <= endPage; i++)
                         {
                             <li class="@(i == currentPage ? "active" : "")">
-                                <a href="@Url.Action("Index","Product", new { page = i, pageSize, sort })">@i
+                                <a href="@Url.Action("Index","Product", new { page = i, pageSize, sort, categoryIds = ViewBag.CategoryIds, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice })">@i
                                 </a>
                             </li>
                         }
@@ -278,7 +308,7 @@
                         {
                             <li class="disabled"><span>...</span></li>
                             <li>
-                                <a href="@Url.Action("Index","Product",new { page = totalPages, pageSize, sort })">
+                                <a href="@Url.Action("Index","Product",new { page = totalPages, pageSize, sort, categoryIds = ViewBag.CategoryIds, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice })">
                                     @totalPages
                                 </a>
                             </li>
@@ -287,7 +317,7 @@
                         @if (currentPage < totalPages)
                         {
                             <li>
-                                <a href="@Url.Action("Index","Product",new { page = currentPage + 1, pageSize, sort })">
+                                <a href="@Url.Action("Index","Product",new { page = currentPage + 1, pageSize, sort, categoryIds = ViewBag.CategoryIds, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice })">
                                     <i class="fa fa-angle-right"></i>
                                 </a>
                             </li>
@@ -305,9 +335,61 @@
 <!-- /SECTION -->
 
 @section Scripts {
-    <!-- Nếu trang này cần script riêng (ví dụ: nouislider cho price filter) -->
-    <script>
-        // Khởi tạo price slider nếu dùng nouislider
-        // $(function () { ... });
-    </script>
+<script>
+    // Hàm áp dụng bộ lọc danh mục
+    function applyCategoryFilter() {
+        let selected = [];
+        document.querySelectorAll('.checkbox-filter input[type="checkbox"]:checked')
+            .forEach(cb => {
+                selected.push(cb.id.replace('category-', ''));
+            });
+
+        let categoryIds = selected.join(',');
+
+        let url = '@Url.Action("Index","Product")'
+            + '?page=1'
+            + '&pageSize=@ViewBag.PageSize'
+            + '&sort=@ViewBag.Sort'
+            + '&minPrice=@ViewBag.MinPrice'
+            + '&maxPrice=@ViewBag.MaxPrice';
+
+
+        if (categoryIds.length > 0) {
+            url += '&categoryIds=' + categoryIds;
+        }
+
+        window.location.href = url;
+    }
+
+    // Hàm áp dụng bộ lọc giá
+    function applyPriceFilter() {
+        let minPrice = document.getElementById('price-min').value.replace(/\./g, '');
+        let maxPrice = document.getElementById('price-max').value.replace(/\./g, '');
+
+        let url = '@Url.Action("Index","Product")'
+            + '?page=1'
+            + '&pageSize=@ViewBag.PageSize'
+            + '&sort=@ViewBag.Sort'
+            + '&categoryIds=@ViewBag.CategoryIds';
+
+
+        if (minPrice) url += '&minPrice=' + minPrice;
+        if (maxPrice) url += '&maxPrice=' + maxPrice;
+
+        window.location.href = url;
+    }
+    // Định dạng input giá tiền với dấu chấm
+    function formatPriceInput(input) {
+        input.value = input.value
+        .replace(/\D/g, '')                // bỏ ký tự không phải số
+        .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // thêm dấu .
+    }
+    document.getElementById('price-min').addEventListener('input', function () {
+        formatPriceInput(this);
+    });
+    document.getElementById('price-max').addEventListener('input', function () {
+        formatPriceInput(this);
+    });
+
+</script>
 }

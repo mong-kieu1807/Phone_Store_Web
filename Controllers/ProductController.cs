@@ -17,11 +17,39 @@ public class ProductController : Controller
         _context = context;
     }
 
-     public async Task<IActionResult> Index(int page = 1, int pageSize = 3, int sort = 0)
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 6, int sort = 0, string? categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null)
     {
         //Chỉ lấy sản phẩm đang hoạt động
         var query = _context.Products.Where(p => p.status == 1);
 
+         // Lấy danh sách category để hiển thị sidebar
+        ViewBag.Categories = await _context.Categories
+            .Where(c => c.status == 1)
+            .ToListAsync();
+
+        List<int> selectedCategoryIds = new();
+        if (!string.IsNullOrEmpty(categoryIds))
+        {
+            selectedCategoryIds = categoryIds
+                .Split(',')
+                .Select(int.Parse)
+                .ToList();
+        }
+        ViewBag.SelectedCategoryIds = selectedCategoryIds;
+
+        // Filter theo nhiều category
+        if (selectedCategoryIds.Any())
+        {
+            query = query.Where(p => selectedCategoryIds.Contains(p.category_id));
+        }
+
+        //Filter theo khoảng giá
+        if (minPrice.HasValue)
+            query = query.Where(p => p.price >= minPrice.Value);
+        if (maxPrice.HasValue)
+            query = query.Where(p => p.price <= maxPrice.Value);                                                
+
+        //Sắp xếp theo giá
         switch (sort)
         {
             case 1: // Price Low -> High
@@ -31,7 +59,7 @@ public class ProductController : Controller
                 query = query.OrderByDescending(p => p.price);
                 break;
             default: // Popular
-                query = query.OrderByDescending(p => p.created_at);
+                query = query.OrderByDescending(p => p.sold_count).ThenByDescending(p => p.created_at);
                 break;
         }
 
@@ -46,12 +74,22 @@ public class ProductController : Controller
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
+        
+        // Top selling sidebar lấy 3 sản phẩm bán chạy nhất
+        ViewBag.TopSellingProducts = await _context.Products
+            .Where(p => p.status == 1)
+            .OrderByDescending(p => p.sold_count)
+            .Take(3)
+            .ToListAsync();
 
         //Truyền dữ liệu ra View
         ViewBag.CurrentPage = page;      // Trang hiện tại
         ViewBag.TotalPages  = totalPages; // Tổng trang
         ViewBag.PageSize    = pageSize;   // Số SP / trang
         ViewBag.Sort        = sort;       // Trạng thái sort
+        ViewBag.CategoryIds = categoryIds; // Danh sách category đã chọn
+        ViewBag.MinPrice = minPrice ?? 0;
+        ViewBag.MaxPrice = maxPrice ?? 50000000;
 
         return View(products);
     }

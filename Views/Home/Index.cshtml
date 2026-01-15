@@ -65,7 +65,7 @@
                                         </p>
                                     }
                                     <div class="d-flex gap-3 align-items-center">
-                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@item.product_id" 
+                                            <a asp-controller="Order" asp-action="BuyNow" asp-route-id="@item.product_id" 
                                            class="btn btn-danger" 
                                            style="padding: 10px 28px; border-radius: 50px; font-weight: 600; font-size: 15px; box-shadow: 0 5px 15px rgba(220,53,69,0.4); transition: all 0.3s ease;"
                                            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(220,53,69,0.5)'" 
@@ -233,8 +233,13 @@
                                             </div>
                                         </div>
                                         <div class="add-to-cart">
-                                            <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                                        </div>
+                                            <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@item.product_id" method="get" style="display:block;">
+
+                                                    <button type="submit" class="add-to-cart-btn">
+                                                        <i class="fa fa-shopping-cart"></i> add to cart
+                                                    </button>
+
+                                                </form>             </div>
                                     </div>
                                     <!-- /product -->
                                 }
@@ -309,8 +314,12 @@
                                         </div>
                                     </div>
                                     <div class="add-to-cart">
-                                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                                    </div>
+                                        <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@item.product_id" method="get" style="display:block;">
+                                                <button type="submit" class="add-to-cart-btn">
+                                                    <i class="fa fa-shopping-cart"></i> add to cart
+                                                </button>
+                                            </form>
+                                            </div>
                                 </div>
                                 <!-- /product -->
                                 }

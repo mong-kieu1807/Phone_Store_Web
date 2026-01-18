@@ -17,16 +17,26 @@ public class ProductController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 6, int sort = 0, string? categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null)
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 6, int sort = 0, string? categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null, string? keyword = null    )
     {
         //Chỉ lấy sản phẩm đang hoạt động
         var query = _context.Products.Where(p => p.status == 1);
+
+         // Tìm kiếm theo từ khóa
+        if (!string.IsNullOrWhiteSpace(keyword))
+        {
+            keyword = keyword.Trim();
+            query = query.Where(p =>
+                p.product_name.Contains(keyword) ||
+                p.brand.Contains(keyword)
+            );
+        }
 
          // Lấy danh sách category để hiển thị sidebar
         ViewBag.Categories = await _context.Categories
             .Where(c => c.status == 1)
             .ToListAsync();
-
+       
         List<int> selectedCategoryIds = new();
         if (!string.IsNullOrEmpty(categoryIds))
         {
@@ -88,8 +98,9 @@ public class ProductController : Controller
         ViewBag.PageSize    = pageSize;   // Số SP / trang
         ViewBag.Sort        = sort;       // Trạng thái sort
         ViewBag.CategoryIds = categoryIds; // Danh sách category đã chọn
-        ViewBag.MinPrice = minPrice ?? 0;
-        ViewBag.MaxPrice = maxPrice ?? 50000000;
+        ViewBag.MinPrice    = minPrice ?? 0;
+        ViewBag.MaxPrice    = maxPrice ?? 50000000;
+        ViewBag.Keyword     = keyword;  // Từ khóa tìm kiếm
 
         return View(products);
     }

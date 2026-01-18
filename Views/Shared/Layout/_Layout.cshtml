@@ -74,6 +74,54 @@
 		<!-- Login Check Script -->
 		@await Html.PartialAsync("~/Views/Shared/Partials/_LoginCheck.cshtml")
 		
+        <!-- CHAT ICON -->
+        <div id="chat-icon" onclick="toggleChat()">
+            <i class="fa fa-comments"></i>
+        </div>
+
+        <!-- CHAT BOX -->
+        <div id="chat-box" style="display:none">
+            <div class="chat-header">
+                Hỗ trợ khách hàng
+                <span onclick="toggleChat()" style="cursor:pointer;float:right">✖</span>
+            </div>
+
+            <div id="chat-messages"></div>
+
+            <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." />
+        </div>
+
+        <!-- SIGNALR -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+        <script>
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/chatHub")
+                .build();
+
+            connection.start()
+                .then(() => console.log("SignalR connected"))
+                .catch(err => console.error(err));
+
+            connection.on("ReceiveMessage", function (user, message) {
+                const msg = document.createElement("div");
+                msg.innerHTML = `<b>${user}:</b> ${message}`;
+                document.getElementById("chat-messages").appendChild(msg);
+            });
+
+            document.getElementById("chat-input")
+                .addEventListener("keypress", function (e) {
+                    if (e.key === "Enter" && this.value.trim() !== "") {
+                        connection.invoke("SendMessage", "Khách", this.value);
+                        this.value = "";
+                    }
+                });
+
+            function toggleChat() {
+                const box = document.getElementById("chat-box");
+                box.style.display = box.style.display === "none" ? "flex" : "none";
+            }
+        </script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

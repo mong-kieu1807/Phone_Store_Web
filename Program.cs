@@ -17,6 +17,10 @@ builder.Services.AddScoped<DatabaseHelper>();
 // Thêm dịch vụ Session (quan trọng cho giỏ hàng)
 builder.Services.AddSession();
 
+// Thêm SignalR chat
+builder.Services.AddSignalR();
+
+
 var app = builder.Build();
 
 // Middleware
@@ -35,7 +39,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-// K�ch ho?t Session
+// Kich hoat Session
 app.UseSession();
 // Areas routing
 app.MapControllerRoute(
@@ -45,5 +49,8 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Map SignalR hub
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

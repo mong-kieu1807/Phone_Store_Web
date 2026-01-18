@@ -18,9 +18,17 @@
 			{
 				<div class="col-md-6">
 					<div class="header-search">
-						<form>
-							<input class="input" placeholder="Search here">
-							<button class="search-btn">Search</button>
+						<form asp-controller="Product" asp-action="Index" method="get">
+							<input
+								class="input"
+								type="text"
+								name="keyword"
+								value="@(ViewBag.Keyword ?? "")"
+								placeholder="Search here" />
+								
+							<!--reset về trang 1 khi search-->
+							<input type="hidden" name="page" value="1" />
+							<button type="submit" class="search-btn">Search</button>
 						</form>
 					</div>
 				</div>

@@ -105,17 +105,19 @@
                     </div>
 
                     <div class="add-to-cart">
-                        <div class="qty-label">
-                            Qty
-                            <div class="input-number">
-                                <input type="number" value="1" min="1" max="@Model.stock_quantity">
-                                <span class="qty-up">+</span>
-                                <span class="qty-down">-</span>
+                        <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@Model.product_id" method="get" onsubmit="return checkLoginBeforeAddToCart(event, @Model.product_id);">
+                            <div class="qty-label">
+                                Qty
+                                <div class="input-number">
+                                    <input type="number" value="1" min="1" max="@Model.stock_quantity">
+                                    <span class="qty-up">+</span>
+                                    <span class="qty-down">-</span>
+                                </div>
                             </div>
-                        </div>
-                        <button class="add-to-cart-btn" @(Model.stock_quantity <= 0 ? "disabled" : "")>
-                            <i class="fa fa-shopping-cart"></i> add to cart
-                        </button>
+                            <button type="submit" class="add-to-cart-btn" @(Model.stock_quantity <= 0 ? "disabled" : "")>
+                                <i class="fa fa-shopping-cart"></i> add to cart
+                            </button>
+                        </form>
                     </div>
 
                     <ul class="product-links">

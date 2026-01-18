@@ -28,28 +28,35 @@
     <!-- Custom stlylesheet -->
     <link type="text/css" rel="stylesheet" href="~/css/style.css"/>
 
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
 </head>
 <body>
+    @{
+        var userId = Context.Session.GetInt32("UserId");
+    }
+
     <!-- TopHeader -->
-	@await Html.PartialAsync("~/Views/Shared/Partials/_TopHeader.cshtml")
-	<!-- endTopHeader -->
-    
+    @await Html.PartialAsync("~/Views/Shared/Partials/_TopHeader.cshtml")
+    <!-- endTopHeader -->
+
     <!-- Header -->
-	@await Html.PartialAsync("~/Views/Shared/Partials/_Header.cshtml")
-	<!-- endHeader -->
+    @await Html.PartialAsync("~/Views/Shared/Partials/_Header.cshtml")
+    <!-- endHeader -->
     <!-- NavBar -->
-	@await Html.PartialAsync("~/Views/Shared/Partials/_NavBar.cshtml")
-	<!-- endNavbar -->
+    @await Html.PartialAsync("~/Views/Shared/Partials/_NavBar.cshtml")
+    <!-- endNavbar -->
 
     <!-- SECTION -->
     @RenderBody()
     <!-- /SECTION -->
 
     <!-- Footer -->
-	@await Html.PartialAsync("~/Views/Shared/Partials/_NewsLetter.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/Partials/_NewsLetter.cshtml")
     <!-- /Footer -->
     <!-- Footer -->
-	@await Html.PartialAsync("~/Views/Shared/Partials/_Footer.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/Partials/_Footer.cshtml")
     <!-- /Footer -->
     
     <!-- jQuery Plugins -->
@@ -60,6 +67,13 @@
 		<script src="~/js/nouislider.min.js"></script>
 		<script src="~/js/jquery.zoom.min.js"></script>
 		<script src="~/js/main.js"></script>
+		
+		<!-- SweetAlert2 -->
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		
+		<!-- Login Check Script -->
+		@await Html.PartialAsync("~/Views/Shared/Partials/_LoginCheck.cshtml")
+		
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

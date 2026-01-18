@@ -1,0 +1,72 @@
+@* Script kiểm tra đăng nhập trước khi thêm vào giỏ *@
+@{
+    var isLoggedIn = Context.Session.GetInt32("UserId") != null;
+}
+
+<script>
+    var isLoggedIn = @(isLoggedIn ? "true" : "false");
+
+    // Kiểm tra đăng nhập khi click nút "Thêm vào giỏ"
+    function checkLoginBeforeAddToCart(event, productId) {
+        if (!isLoggedIn) {
+            event.preventDefault();
+            
+            // Hiển thị thông báo  SweetAlert2 (nếu có) hoặc confirm
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Vui lòng đăng nhập',
+                    text: 'Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đăng nhập ngay',
+                    cancelButtonText: 'Để sau',
+                    confirmButtonColor: '#D10024',
+                    cancelButtonColor: '#999'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Lưu URL hiện tại để quay lại sau khi đăng nhập
+                        window.location.href = '@Url.Action("Login", "Auth")' + '?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                });
+            } else {
+                // Fallback nếu không có SweetAlert2
+                if (confirm('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!\n\nĐăng nhập ngay?')) {
+                    window.location.href = '@Url.Action("Login", "Auth")' + '?returnUrl=' + encodeURIComponent(window.location.pathname);
+                }
+            }
+            
+            return false;
+        }
+        return true;
+    }
+
+    // Kiểm tra đăng nhập khi click "Mua ngay"
+    function checkLoginBeforeBuyNow(event, productId) {
+        if (!isLoggedIn) {
+            event.preventDefault();
+            
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Vui lòng đăng nhập',
+                    text: 'Bạn cần đăng nhập để mua hàng!',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đăng nhập',
+                    cancelButtonText: 'Hủy',
+                    confirmButtonColor: '#D10024'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '@Url.Action("Login", "Auth")' + '?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                });
+            } else {
+                if (confirm('Bạn cần đăng nhập để mua hàng!\n\nĐăng nhập ngay?')) {
+                    window.location.href = '@Url.Action("Login", "Auth")' + '?returnUrl=' + encodeURIComponent(window.location.pathname);
+                }
+            }
+            
+            return false;
+        }
+        return true;
+    }
+</script>

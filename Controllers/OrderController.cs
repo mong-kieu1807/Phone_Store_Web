@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using PhoneStore.Models;
 using PhoneStore.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
+using Microsoft.EntityFrameworkCore; // Cần cái này để dùng FindAsync
+using System.Text.Json; // Cần cái này để xử lý Session
+using PhoneStore.Helper; // Import để dùng [Authorize]
 
 namespace PhoneStore.Controllers
 {
+    [PhoneStore.Helper.Authorize] // Yêu cầu đăng nhập cho toàn bộ controller
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -210,7 +212,12 @@ namespace PhoneStore.Controllers
                     userId = newUser.user_id; // LẤY ID CỦA NGƯỜI VỪA TẠO
                 }
             }
-
+            // Lấy user_id từ Session
+            var userid = HttpContext.Session.GetInt32("UserId");
+            if (userid == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
             // 2. TẠO HÓA ĐƠN (BILL) VỚI USER ID VỪA CÓ
             var bill = new Bill
             {

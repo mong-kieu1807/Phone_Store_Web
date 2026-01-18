@@ -41,29 +41,23 @@
     @await Html.PartialAsync("~/Views/Shared/Partials/_TopHeader.cshtml")
     <!-- endTopHeader -->
 
-    @if (userId != null)
-    {
-        <!-- Header -->
-        @await Html.PartialAsync("~/Views/Shared/Partials/_Header.cshtml")
-        <!-- endHeader -->
-        <!-- NavBar -->
-        @await Html.PartialAsync("~/Views/Shared/Partials/_NavBar.cshtml")
-        <!-- endNavbar -->
-    }
+    <!-- Header -->
+    @await Html.PartialAsync("~/Views/Shared/Partials/_Header.cshtml")
+    <!-- endHeader -->
+    <!-- NavBar -->
+    @await Html.PartialAsync("~/Views/Shared/Partials/_NavBar.cshtml")
+    <!-- endNavbar -->
 
     <!-- SECTION -->
     @RenderBody()
     <!-- /SECTION -->
 
-    @if (userId != null)
-    {
-        <!-- Footer -->
-        @await Html.PartialAsync("~/Views/Shared/Partials/_NewsLetter.cshtml")
-        <!-- /Footer -->
-        <!-- Footer -->
-        @await Html.PartialAsync("~/Views/Shared/Partials/_Footer.cshtml")
-        <!-- /Footer -->
-    }
+    <!-- Footer -->
+    @await Html.PartialAsync("~/Views/Shared/Partials/_NewsLetter.cshtml")
+    <!-- /Footer -->
+    <!-- Footer -->
+    @await Html.PartialAsync("~/Views/Shared/Partials/_Footer.cshtml")
+    <!-- /Footer -->
     
     <!-- jQuery Plugins -->
 		<script src="~/js/jquery.min.js"></script>

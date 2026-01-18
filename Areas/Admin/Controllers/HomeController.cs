@@ -34,7 +34,7 @@ namespace PhoneStore.Areas.Admin.Controllers
 
 			// Sản phẩm sắp hết hàng
 			ViewBag.LowStockProducts = await _context.Products
-				.Where(p => p.stock_quantity < 10)
+				.Where(p => p.stock_quantity < 5)
 				.OrderBy(p => p.stock_quantity)
 				.Take(5)
 				.ToListAsync();

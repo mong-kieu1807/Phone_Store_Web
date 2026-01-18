@@ -1,4 +1,4 @@
-﻿@* NTBinh 14/01/2026 - Updated Checkout View *@
+﻿@* NTBinh 14/01/2026 - Checkout: Clean Version *@
 @model List<PhoneStore.Models.CartItem>
 
 @{
@@ -10,7 +10,6 @@
     <div class="container">
         <form asp-controller="Order" asp-action="PlaceOrder" method="post">
             <div class="row">
-
                 <div class="col-md-7">
                     <div class="billing-details">
                         <div class="section-title">
@@ -18,37 +17,23 @@
                         </div>
 
                         <div class="form-group">
-                            <input class="input" type="text" name="FullName" placeholder="Họ và tên người nhận" required>
+                            <label>Họ và tên người nhận:</label>
+                            <input class="input" type="text" name="FullName" placeholder="Nhập họ tên..." required>
                         </div>
 
                         <div class="form-group">
-                            <input class="input" type="email" name="Email" placeholder="Email (Bắt buộc nếu tạo tài khoản)" required>
+                             <label>Số điện thoại:</label>
+                            <input class="input" type="tel" name="Phone" placeholder="Nhập số điện thoại..." required>
                         </div>
 
                         <div class="form-group">
-                            <input class="input" type="text" name="Address" placeholder="Địa chỉ giao hàng (Số nhà, đường, phường...)" required>
+                             <label>Địa chỉ giao hàng:</label>
+                            <input class="input" type="text" name="Address" placeholder="Số nhà, đường, phường..." required>
                         </div>
 
                         <div class="form-group">
-                            <input class="input" type="tel" name="Phone" placeholder="Số điện thoại" required>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="input-checkbox">
-                                <input type="checkbox" id="create-account" name="CreateAccount" value="true">
-                                <label for="create-account">
-                                    <span></span>
-                                    Tạo tài khoản mới?
-                                </label>
-                                <div class="caption">
-                                    <p>Nhập mật khẩu để hệ thống tự động tạo tài khoản cho bạn.</p>
-                                    <input class="input" type="password" name="Password" placeholder="Nhập mật khẩu của bạn">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <textarea class="input" name="Note" placeholder="Ghi chú đơn hàng (Ví dụ: Giao giờ hành chính)"></textarea>
+                             <label>Ghi chú đơn hàng (Tùy chọn):</label>
+                            <textarea class="input" name="Note" placeholder="Ví dụ: Giao hàng giờ hành chính"></textarea>
                         </div>
                     </div>
                 </div>
@@ -66,9 +51,7 @@
                             @foreach (var item in Model)
                             {
                                     <div class="order-col">
-                                        <div>
-                                        @item.Quantity x @item.ProductName
-                                        </div>
+                                        <div>@item.Quantity x @item.ProductName</div>
                                         <div>@item.Total.ToString("n0") đ</div>
                                     </div>
                             }
@@ -101,7 +84,7 @@
                                 Chuyển khoản ngân hàng
                             </label>
                             <div class="caption">
-                                <p>Vui lòng chuyển khoản đến STK: 123456789 - Ngân hàng MB Bank.</p>
+                                <p>STK: 123456789 - Ngân hàng MB Bank - NGUYEN VAN A</p>
                             </div>
                         </div>
                     </div>

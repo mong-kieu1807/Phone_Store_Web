@@ -15,27 +15,140 @@ namespace PhoneStore.Areas.Admin.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string? search, string? sort)
         {
-            // Dữ liệu tĩnh mẫu
-            var categories = new List<Category>
+            var query = _context.Categories
+                .Where(c => c.status == 1);   // chỉ lấy danh mục đang hiển thị
+
+            // Tìm kiếm theo từ khóa
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                new Category { category_id = 1, category_name = "Điện thoại", description = "Các loại điện thoại thông minh", status = 1, created_at = DateTime.Now.AddMonths(-6), updated_at = DateTime.Now.AddDays(-10) },
-                new Category { category_id = 2, category_name = "Laptop", description = "Máy tính xách tay", status = 1, created_at = DateTime.Now.AddMonths(-5), updated_at = DateTime.Now.AddDays(-8) },
-                new Category { category_id = 3, category_name = "Tablet", description = "Máy tính bảng", status = 1, created_at = DateTime.Now.AddMonths(-4), updated_at = DateTime.Now.AddDays(-5) },
-                new Category { category_id = 4, category_name = "Phụ kiện", description = "Phụ kiện điện thoại, laptop", status = 1, created_at = DateTime.Now.AddMonths(-3), updated_at = DateTime.Now.AddDays(-3) },
-                new Category { category_id = 5, category_name = "Tai nghe", description = "Tai nghe không dây, có dây", status = 1, created_at = DateTime.Now.AddMonths(-2), updated_at = DateTime.Now.AddDays(-1) }
-            };
-            
+                query = query.Where(c => c.category_name.Contains(search));
+            }
+
+            // Sắp xếp
+            query = sort == "asc"
+                ? query.OrderBy(c => c.created_at)
+                : query.OrderByDescending(c => c.created_at);
+
+                var categories = await query.ToListAsync();
+
+
+            ViewBag.Search  = search;           // giữ lại từ khóa tìm kiếm trên view
+            ViewBag.Sort    = sort ?? "desc";   // giữ lại kiểu sắp xếp trên view
+
             return View(categories);
         }
 
-        // Xóa danh mục (Chức năng tạm thời - Dữ liệu tĩnh)
-        [HttpPost]
-        public IActionResult Delete(int id)
+         // Hiển thị form tạo danh mục
+        [HttpGet]
+        public IActionResult Create()
         {
-            // Không thực hiện xóa thật sự - chỉ trả về thông báo
-            return Json(new { success = true, message = "Chức năng đang phát triển - Dữ liệu tĩnh" });
+            return View();
         }
+        // Xử lý tạo danh mục
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Category model)
+        {
+            //Kiểm tra dữ liệu hợp lệ
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Dữ liệu không hợp lệ!";
+                return View(model);
+            }
+
+            // Kiểm tra tên danh mục đã tồn tại
+            bool isExist = await _context.Categories
+                .AnyAsync(c => c.category_name == model.category_name);
+
+            if (isExist)
+            {
+                ModelState.AddModelError("category_name", "Tên danh mục đã tồn tại!");
+                return View(model);
+            }
+
+            // Thiết lập các thuộc tính còn lại
+            model.status = 1; // Mặc định là hoạt động
+            model.created_at = DateTime.Now;
+            model.updated_at = DateTime.Now;
+
+            _context.Categories.Add(model);
+            await _context.SaveChangesAsync();
+
+            // Hiển thị thông báo thành công
+            TempData["SuccessMessage"] = "Thêm danh mục thành công!";
+
+            return RedirectToAction("Index");
+        }
+
+        // Hiển thị form cập nhật danh mục
+        [HttpGet]
+         public async Task<IActionResult> Edit(int id)
+        {
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null) return NotFound();
+
+            return View(category); // giữ form cũ
+        }
+        // Xử lý cập nhật danh mục
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Category model)
+        {
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            category.category_name = model.category_name;
+            category.description   = model.description;
+
+            category.updated_at = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Cập nhật danh mục thành công!";
+            return RedirectToAction("Index");
+        }
+
+
+        //Xóa danh mục
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var category = await _context.Categories.FindAsync(id);
+            // Kiểm tra nếu không tìm thấy danh mục
+            if (category == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy danh mục" });
+            }
+            // Kiểm tra nếu danh mục có sản phẩm liên kết
+            bool hasProduct = await _context.Products
+                .AnyAsync(p => p.category_id == id && p.status == 1);
+
+            if (hasProduct)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Danh mục đang có sản phẩm, không thể xóa"
+                });
+            }
+
+            category.status = 0;           
+            category.updated_at = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Đã xóa danh mục" });
+        }
+
     }
 }

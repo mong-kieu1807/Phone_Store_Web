@@ -1,0 +1,331 @@
+@model PhoneStore.Models.Category
+@{
+	ViewData["Title"] = "Thêm danh mục mới";
+}
+
+<div id="page-wrapper">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">
+					<i class="fa fa-plus-circle"></i> @ViewData["Title"]
+				</h1>
+			</div>
+		</div>
+
+		@if (TempData["SuccessMessage"] != null)
+		{
+			<div class="alert alert-success">
+				<i class="fa fa-check-circle"></i> @TempData["SuccessMessage"]
+			</div>
+		}
+		@if (TempData["ErrorMessage"] != null)
+		{
+			<div class="alert alert-danger">
+				<i class="fa fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+			</div>
+		}
+
+		<form asp-action="Create" asp-controller="Category" asp-area="Admin" method="post">
+			<div class="row">
+				<div class="col-lg-8">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<i class="fa fa-info-circle"></i> Thông tin danh mục
+						</div>
+						<div class="panel-body">
+							<div class="form-group">
+								<label><i class="fa fa-tag"></i> Tên danh mục <span class="text-danger">*</span></label>
+								<input asp-for="category_name" class="form-control" placeholder="Nhập tên danh mục..." required />
+								<span asp-validation-for="category_name" class="text-danger"></span>
+								<small class="help-block"><i class="fa fa-lightbulb-o"></i> VD: Điện thoại, Phụ kiện, Sạc...</small>
+							</div>
+
+							<div class="form-group">
+								<label><i class="fa fa-align-left"></i> Mô tả danh mục</label>
+								<textarea asp-for="description" class="form-control" rows="6" placeholder="Nhập mô tả chi tiết về danh mục..."></textarea>
+								<span asp-validation-for="description" class="text-danger"></span>
+								<small class="help-block"><i class="fa fa-info-circle"></i> Mô tả giúp khách hàng hiểu rõ hơn về danh mục này</small>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-lg-4">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<i class="fa fa-cogs"></i> Hành động
+						</div>
+						<div class="panel-body">
+							<button type="submit" class="btn btn-success btn-block btn-lg" onclick="return confirm('Bạn có chắc chắn muốn thêm danh mục này không?');">
+								<i class="fa fa-save"></i> Lưu danh mục
+							</button>
+							<a asp-area="Admin" asp-controller="Category" asp-action="Index" class="btn btn-default btn-block btn-md">
+								<i class="fa fa-arrow-left"></i> Quay lại
+							</a>
+						</div>
+					</div>
+
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<i class="fa fa-info-circle"></i> Hướng dẫn
+						</div>
+						<div class="panel-body" style="font-size: 13px;">
+							<ul style="padding-left: 20px; margin: 0;">
+								<li>Tên danh mục là bắt buộc</li>
+								<li>Bạn có thể chỉnh sửa sau khi tạo</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<style>
+	#page-wrapper {
+		margin-left: 220px;
+		padding: 20px;
+		min-height: 100vh;
+		background: #f8f9fa;
+	}
+
+	.page-header {
+		color: #2c3e50;
+		margin-top: 0;
+		margin-bottom: 30px;
+		font-size: 28px;
+		font-weight: 600;
+		border-bottom: 2px solid #e3e3e3;
+		padding-bottom: 15px;
+	}
+
+	.page-header i {
+		color: #337ab7;
+		margin-right: 10px;
+	}
+
+	.panel {
+		background: white;
+		border-radius: 6px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		margin-bottom: 20px;
+		border: 1px solid #e3e3e3;
+	}
+
+	.panel-heading {
+		background: #f5f5f5;
+		padding: 15px 20px;
+		border-bottom: 1px solid #ddd;
+		font-weight: 600;
+		color: #2c3e50;
+		border-radius: 6px 6px 0 0;
+	}
+
+	.panel-heading i {
+		margin-right: 8px;
+		color: #337ab7;
+	}
+
+	.panel-primary .panel-heading {
+		background: linear-gradient(135deg, #337ab7 0%, #2c5aa0 100%);
+		color: white;
+		border-bottom: 3px solid #2c5aa0;
+	}
+
+	.panel-primary .panel-heading i {
+		color: #fff;
+	}
+
+	.panel-info .panel-heading {
+		background: linear-gradient(135deg, #5bc0de 0%, #46b8da 100%);
+		color: white;
+		border-bottom: 3px solid #46b8da;
+	}
+
+	.panel-info .panel-heading i {
+		color: #fff;
+	}
+
+	.panel-body {
+		padding: 20px;
+	}
+
+	.form-group {
+		margin-bottom: 20px;
+	}
+
+	.form-group label {
+		font-weight: 600;
+		margin-bottom: 8px;
+		display: block;
+		color: #2c3e50;
+	}
+
+	.form-group label i {
+		margin-right: 5px;
+		color: #337ab7;
+	}
+
+	.form-control {
+		width: 100%;
+		padding: 10px 12px;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		font-size: 14px;
+		font-family: inherit;
+		transition: all 0.3s ease;
+	}
+
+	.form-control:focus {
+		border-color: #337ab7;
+		outline: none;
+		box-shadow: 0 0 0 0.2rem rgba(51, 122, 183, 0.25);
+		background-color: #f8f9fa;
+	}
+
+	textarea.form-control {
+		resize: vertical;
+		min-height: 100px;
+	}
+
+	.text-danger {
+		color: #dc3545;
+		font-size: 13px;
+		display: block;
+		margin-top: 5px;
+	}
+
+	.help-block {
+		margin-top: 6px;
+		color: #6c757d;
+		font-size: 12px;
+		display: block;
+	}
+
+	.help-block i {
+		margin-right: 4px;
+	}
+
+	/* Button Styles */
+	.btn {
+		padding: 10px 20px;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-weight: 600;
+		transition: all 0.3s ease;
+		display: inline-block;
+		text-align: center;
+		text-decoration: none;
+		font-size: 14px;
+	}
+
+	.btn i {
+		margin-right: 8px;
+	}
+
+	.btn-success {
+		background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+		color: white;
+		border: none;
+	}
+
+	.btn-success:hover {
+		background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+		color: white;
+		transform: translateY(-2px);
+		box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+	}
+
+	.btn-default {
+		background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+		color: white;
+		border: none;
+	}
+
+	.btn-default:hover {
+		background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+		color: white;
+		transform: translateY(-2px);
+		box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+	}
+
+	.btn-block {
+		width: 100%;
+		display: block;
+		margin-bottom: 10px;
+	}
+
+	.btn-lg {
+		padding: 12px 24px;
+		font-size: 16px;
+	}
+
+	.btn-md {
+		padding: 10px 20px;
+		font-size: 14px;
+	}
+
+	/* Alert Styles */
+	.alert {
+		padding: 15px 20px;
+		border-radius: 4px;
+		margin-bottom: 20px;
+		border-left: 4px solid;
+		display: flex;
+		align-items: center;
+	}
+
+	.alert i {
+		margin-right: 10px;
+		font-size: 18px;
+	}
+
+	.alert-success {
+		background: #d4edda;
+		border-left-color: #28a745;
+		color: #155724;
+	}
+
+	.alert-danger {
+		background: #f8d7da;
+		border-left-color: #dc3545;
+		color: #721c24;
+	}
+
+	/* Panel Info Body */
+	.panel-info .panel-body {
+		background: #f0f8ff;
+	}
+
+	.panel-info .panel-body ul {
+		margin: 0;
+		padding-left: 20px;
+	}
+
+	.panel-info .panel-body li {
+		margin-bottom: 8px;
+		color: #004085;
+	}
+
+	/* Responsive */
+	@@media (max-width: 992px) {
+		#page-wrapper {
+			margin-left: 0;
+		}
+
+		.col-lg-8,
+		.col-lg-4 {
+			width: 100%;
+			margin-bottom: 15px;
+		}
+	}
+</style>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

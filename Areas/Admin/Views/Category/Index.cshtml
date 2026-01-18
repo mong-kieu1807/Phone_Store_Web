@@ -11,16 +11,31 @@
                     <h1 class="page-header">
                         <i class="fa fa-folder"></i> Quản lý danh mục
                     </h1>
+                    <!-- Thông báo thành công / lỗi -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="fa fa-check-circle"></i>
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fa fa-exclamation-circle"></i>
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
                     <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Tìm kiếm danh mục..." />
+                        <input type="text"
+                            id="searchInput"
+                            placeholder="Tìm kiếm danh mục..."
+                            value="@ViewBag.Search" />
                         <i class="fa fa-search"></i>
                     </div>
                     <div class="button-group">
-                        <button class="filter-btn sort-btn">
+                        <button class="filter-btn sort-btn" id="sortBtn">
                             <i class="fa fa-sort"></i> Sắp xếp
-                        </button>
-                        <button class="filter-btn">
-                            <i class="fa fa-filter"></i> Lọc
                         </button>
                     </div>
                 </div>
@@ -42,6 +57,7 @@
                                     <th>Mô tả</th>
                                     <th>Trạng thái</th>
                                     <th>Ngày tạo</th>
+                                    <th>Ngày cập nhật</th>
                                     <th>Hành động</th>
                                 </tr>
                             </thead>
@@ -63,6 +79,11 @@
                                             }
                                         </td>
                                         <td>@(category.created_at?.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                                        <td>
+                                            @(category.updated_at != null 
+                                                ? category.updated_at.Value.ToString("dd/MM/yyyy") 
+                                                : "-")
+                                        </td>
                                         <td>
                                             <div class="action-buttons">
                                                 <a asp-area="Admin" asp-controller="Category" asp-action="Edit" asp-route-id="@category.category_id" class="btn btn-primary btn-sm">
@@ -261,27 +282,65 @@
 @section Scripts {
     <script>
         function deleteCategory(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
-                fetch('@Url.Action("Delete", "Category", new { area = "Admin" })', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(id)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        location.reload();
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {
-                    alert('Có lỗi xảy ra: ' + error);
-                });
-            }
+            if (!confirm('Bạn có chắc chắn muốn xóa danh mục này?')) return;
+
+            fetch('@Url.Action("Delete", "Category", new { area = "Admin" })', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'id=' + id
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                if (data.success) location.reload();
+            })
+            .catch(err => alert('Lỗi: ' + err));
         }
+
+        // Tìm kiếm khi nhấn Enter
+        document.getElementById('searchInput')
+        .addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                let keyword = this.value.trim();
+                let url = '@Url.Action("Index","Category", new { area = "Admin" })';
+
+                if (keyword !== '') {
+                    url += '?search=' + encodeURIComponent(keyword);
+                }
+
+                window.location.href = url;
+            }
+        });
+
+        // Sắp xếp khi nhấn nút
+        document.getElementById('sortBtn')
+        .addEventListener('click', function () {
+            redirectWithParams(true);
+        });
+        // Hàm chuyển hướng với tham số tìm kiếm và sắp xếp
+        function redirectWithParams(toggleSort = false) {
+            const search = document.getElementById('searchInput').value.trim();
+            let sort = '@ViewBag.Sort';
+
+            // Đảo trạng thái sort
+            if (toggleSort) {
+                sort = sort === 'asc' ? 'desc' : 'asc';
+            }
+
+            let url = '@Url.Action("Index","Category", new { area = "Admin" })';
+            let params = [];
+
+            if (search !== '') params.push('search=' + encodeURIComponent(search));
+            if (sort !== '') params.push('sort=' + sort);
+
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+
+            window.location.href = url;
+        }
+
     </script>
 }

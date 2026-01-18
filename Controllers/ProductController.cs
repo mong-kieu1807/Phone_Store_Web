@@ -102,7 +102,8 @@ public class ProductController : Controller
 
         if (product == null)
         {
-            return NotFound();
+            TempData["ErrorMessage"] = "Không tìm thấy sản phẩm!";
+            return RedirectToAction("Index");
         }
 
         // Lấy danh sách sản phẩm liên quan (cùng category, khác id)

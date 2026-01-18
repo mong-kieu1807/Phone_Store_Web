@@ -6,9 +6,21 @@
         <div id="responsive-nav">
             <!-- NAV -->
             <ul class="main-nav nav navbar-nav">
-                <li class="active"><a asp-controller="Home" asp-action="Index">Home</a></li>
-                <li><a asp-controller="Product" asp-action="Index">Smartphones</a></li>
-                <li><a asp-controller="Category" asp-action="Index">Categories</a></li>
+                <li class="@(ViewData["ActiveMenu"]?.ToString() == "Home" ? "active" : "")">
+                    <a asp-controller="Home" asp-action="Index">Home</a>
+                </li>
+                <li class="@(ViewData["ActiveMenu"]?.ToString() == "Products" ? "active" : "")">
+                    <a asp-controller="Product" asp-action="Index">Smartphones</a>
+                </li>
+                <li class="@(ViewData["ActiveMenu"]?.ToString() == "Categories" ? "active" : "")">
+                    <a asp-controller="Category" asp-action="Index">Categories</a>
+                </li>
+                <li class="@(ViewData["ActiveMenu"]?.ToString() == "About" ? "active" : "")">
+                    <a asp-controller="Home" asp-action="AboutUs">About Us</a>
+                </li>
+                <li class="@(ViewData["ActiveMenu"]?.ToString() == "Contact" ? "active" : "")">
+                    <a asp-controller="Contact" asp-action="Index">Contact</a>
+                </li>
             </ul>
             <!-- /NAV -->
         </div>

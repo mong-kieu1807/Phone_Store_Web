@@ -1,6 +1,7 @@
 ﻿@model List<PhoneStore.Models.Product>
 @{
     ViewData["Title"] = "Danh mục sản phẩm";
+    ViewData["ActiveMenu"] = "Categories";
     var categories = ViewBag.Categories as List<PhoneStore.Models.Category>;
     var selectedCategoryId = ViewBag.SelectedCategoryId as int?;
     var currentPage = ViewBag.CurrentPage ?? 1;

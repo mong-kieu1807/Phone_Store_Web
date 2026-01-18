@@ -9,11 +9,11 @@
                 <div class="col-md-3 col-xs-6">
                     <div class="footer">
                         <h3 class="footer-title">About Us</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.</p>
+                        <p>Trang web bán điện thoại di động. Chuyên cung cấp các sản phẩm chất lượng với giá cả hợp lý.</p>
                         <ul class="footer-links">
-                            <li><a href="#"><i class="fa fa-map-marker"></i>1734 Stonecoal Road</a></li>
-                            <li><a href="#"><i class="fa fa-phone"></i>+021-95-51-84</a></li>
-                            <li><a href="#"><i class="fa fa-envelope-o"></i>email@email.com</a></li>
+                            <li><a href="#"><i class="fa fa-map-marker"></i>65 Huỳnh Thúc Kháng, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh. </a></li>
+                            <li><a href="#"><i class="fa fa-phone"></i>0354631234</a></li>
+                            <li><a href="#"><i class="fa fa-envelope-o"></i>contact@email.com</a></li>
                         </ul>
                     </div>
                 </div>
@@ -21,12 +21,18 @@
                 <div class="col-md-3 col-xs-6">
                     <div class="footer">
                         <h3 class="footer-title">Categories</h3>
-                        <ul class="footer-links">
-                            <li><a href="#">Hot deals</a></li>
-                            <li><a href="#">Laptops</a></li>
-                            <li><a href="#">Smartphones</a></li>
-                            <li><a href="#">Cameras</a></li>
-                            <li><a href="#">Accessories</a></li>
+                        <ul class="footer-links" id="categoryList">
+                            <li><a asp-controller="Category" asp-action="Index" asp-route-categoryId="2">Samsung</a></li>
+                            <li><a asp-controller="Category" asp-action="Index" asp-route-categoryId="1">Iphone</a></li>
+                            <li><a asp-controller="Category" asp-action="Index" asp-route-categoryId="3">Xiaomi</a></li>
+                            <li><a asp-controller="Category" asp-action="Index" asp-route-categoryId="4">OPPO</a></li>
+                            <li><a asp-controller="Category" asp-action="Index" asp-route-categoryId="5">Vivo</a></li>
+                            <li class="hidden-category" style="display: none;"><a asp-controller="Category" asp-action="Index" asp-route-categoryId="6">Realme</a></li>
+                            <li class="hidden-category" style="display: none;"><a asp-controller="Category" asp-action="Index" asp-route-categoryId="7">Nokia</a></li>
+                            <li class="hidden-category" style="display: none;"><a asp-controller="Category" asp-action="Index" asp-route-categoryId="8">Asus</a></li>
+                            <li class="hidden-category" style="display: none;"><a asp-controller="Category" asp-action="Index" asp-route-categoryId="9">Sony</a></li>
+                            <li class="hidden-category" style="display: none;"><a asp-controller="Category" asp-action="Index" asp-route-categoryId="10">Google Pixel</a></li>
+                            <li><a href="#" id="toggleCategories" style="color: #D10024; font-weight: bold;">Xem thêm ▼</a></li>
                         </ul>
                     </div>
                 </div>
@@ -37,11 +43,8 @@
                     <div class="footer">
                         <h3 class="footer-title">Information</h3>
                         <ul class="footer-links">
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
-                            <li><a href="#">Orders and Returns</a></li>
-                            <li><a href="#">Terms & Conditions</a></li>
+                            <li><a asp-controller="Home" asp-action="AboutUs">About Us</a></li>
+                            <li><a asp-controller="Contact" asp-action="Index">Contact Us</a></li>
                         </ul>
                     </div>
                 </div>
@@ -51,10 +54,8 @@
                         <h3 class="footer-title">Service</h3>
                         <ul class="footer-links">
                             <li><a href="#">My Account</a></li>
-                            <li><a href="#">View Cart</a></li>
-                            <li><a href="#">Wishlist</a></li>
+                            <li><a asp-controller="Order" asp-action="Cart">View Cart</a></li>
                             <li><a href="#">Track My Order</a></li>
-                            <li><a href="#">Help</a></li>
                         </ul>
                     </div>
                 </div>
@@ -93,3 +94,24 @@
     <!-- /bottom footer -->
 </footer>
 <!-- /FOOTER -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('toggleCategories');
+        const hiddenCategories = document.querySelectorAll('.hidden-category');
+        let isExpanded = false;
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                isExpanded = !isExpanded;
+
+                hiddenCategories.forEach(function(item) {
+                    item.style.display = isExpanded ? 'block' : 'none';
+                });
+
+                toggleBtn.innerHTML = isExpanded ? 'Thu gọn ▲' : 'Xem thêm ▼';
+            });
+        }
+    });
+</script>

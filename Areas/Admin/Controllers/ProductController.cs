@@ -44,7 +44,7 @@ namespace PhoneStore.Areas.Admin.Controllers
 		{
 		ViewBag.Categories = await _context.Set<Category>().Where(c => c.status == 1).ToListAsync();
 		return View();
-	}
+		}
 
 	// Xử lý thêm sản phẩm mới
 	[HttpPost]
@@ -62,7 +62,7 @@ namespace PhoneStore.Areas.Admin.Controllers
 			// Xử lý upload ảnh
 			if (imageFile != null && imageFile.Length > 0)
 			{
-				var uploadDir = Path.Combine(_env.WebRootPath, "img", "Products");
+				var uploadDir = Path.Combine(_env.WebRootPath, "img");
 				if (!Directory.Exists(uploadDir))
 				{
 					Directory.CreateDirectory(uploadDir);
@@ -135,7 +135,7 @@ namespace PhoneStore.Areas.Admin.Controllers
 			// Xử lý upload ảnh mới
 			if (imageFile != null && imageFile.Length > 0)
 			{
-				var uploadDir = Path.Combine(_env.WebRootPath, "img", "Products");
+				var uploadDir = Path.Combine(_env.WebRootPath, "img");
 				if (!Directory.Exists(uploadDir))
 				{
 					Directory.CreateDirectory(uploadDir);

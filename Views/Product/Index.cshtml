@@ -1,6 +1,7 @@
 @model List<PhoneStore.Models.Product>
 @{
     ViewData["Title"] = "Products";
+    ViewData["ActiveMenu"] = "Products";
 
     int currentPage = ViewBag.CurrentPage ?? 1;
     int totalPages  = ViewBag.TotalPages ?? 1;

@@ -132,21 +132,21 @@
 												<td>@order.created_at.ToString("dd/MM/yyyy")</td>
 												<td>@order.total_amount.ToString("N0") VNĐ</td>
 												<td>
-													@if (order.shipping_status == "Pending")
+													@if (order.shipping_status == "Chờ xử lý")
 													{
 														<span class="label label-warning">Chờ xử lý</span>
 													}
-													else if (order.shipping_status == "Confirmed")
+													else if (order.shipping_status == "Đã xác nhận")
 													{
 														<span class="label label-info">Đã xác nhận</span>
 													}
-													else if (order.shipping_status == "Shipping")
+													else if (order.shipping_status == "Đang giao")
 													{
 														<span class="label label-primary">Đang giao</span>
 													}
-													else if (order.shipping_status == "Completed")
+													else if (order.shipping_status == "Đã giao")
 													{
-														<span class="label label-success">Hoàn thành</span>
+														<span class="label label-success">Đã giao</span>
 													}
 													else
 													{
@@ -240,8 +240,10 @@
 						<p>Chào mừng bạn đến với trang quản trị PhoneStore. Từ đây bạn có thể:</p>
 						<ul>
 							<li>Quản lý sản phẩm, danh mục sản phẩm</li>
-							<li>Theo dõi và xử lý đơn hàng</li>
+							<li>Quản lý đơn hàng</li>
 							<li>Quản lý thông tin khách hàng</li>
+							<li>Quản lý thông tin nhà cung cấp</li>
+							<li>Quản lý phiếu nhập hàng</li>
 							<li>Xem báo cáo doanh thu và thống kê</li>
 							<li>Cấu hình cài đặt hệ thống</li>
 						</ul>

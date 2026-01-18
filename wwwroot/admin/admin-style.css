@@ -134,6 +134,15 @@ body {
     color: #fff;
 }
 
+.panel-info .panel-heading {
+    background-color: #5bc0de;
+    color: #fff;
+}
+
+.panel-info .panel-heading i {
+    color: #fff;
+}
+
 /* Button Styles */
 .btn {
     border-radius: 4px;
@@ -142,14 +151,16 @@ body {
 }
 
 .btn-primary {
-    background-color: #3498db;
-    border-color: #3498db;
+    background-color: #FACC15;
+    border-color: #FACC15;
+    color: white;
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-    background-color: #2980b9;
-    border-color: #2980b9;
+    background-color: #EAB308;
+    border-color: #EAB308;
+    color: white;
 }
 
 .btn-success {

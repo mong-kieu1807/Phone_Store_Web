@@ -9,16 +9,19 @@
 	<meta name="description" content="PhoneStore Admin Panel">
 	<meta name="author" content="">
 
-	<title>@ViewData["Title"] - PhoneStore Admin</title>
+	<title>@ViewData["Title"] PhoneStore Admin</title>
 
 	<!-- Bootstrap Core CSS -->
-	<link href="~/css/bootstrap.min.css" rel="stylesheet">
+	<link href="~/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true">
 
 	<!-- Font Awesome -->
-	<link href="~/css/font-awesome.min.css" rel="stylesheet">
+	<link href="~/css/font-awesome.min.css" rel="stylesheet" asp-append-version="true">
+
+	<!-- Main Style CSS -->
+	<link href="~/css/style.css" rel="stylesheet" asp-append-version="true">
 
 	<!-- Custom Admin CSS -->
-	<link href="~/admin/admin-style.css" rel="stylesheet">
+	<link href="~/admin/admin-style.css" rel="stylesheet" asp-append-version="true">
 
 	<!-- Custom Styles -->
 	@RenderSection("Style", required: false)

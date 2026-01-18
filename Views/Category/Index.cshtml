@@ -1,6 +1,7 @@
 ﻿@model List<PhoneStore.Models.Product>
 @{
     ViewData["Title"] = "Danh mục sản phẩm";
+    ViewData["ActiveMenu"] = "Categories";
     var categories = ViewBag.Categories as List<PhoneStore.Models.Category>;
     var selectedCategoryId = ViewBag.SelectedCategoryId as int?;
     var currentPage = ViewBag.CurrentPage ?? 1;
@@ -92,16 +93,17 @@
                                             }
                                         </h4>
                                         <div class="product-rating">
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star-o"></i>
-                                        </div>
-                                        <div class="product-btns">
-                                            <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
-                                            <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">So sánh</span></button>
-                                            <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">Xem nhanh</span></button>
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= product.rating)
+                                                {
+                                                    <i class="fa fa-star"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fa fa-star-o"></i>
+                                                }
+                                            }
                                         </div>
                                     </div>
                                     <div class="add-to-cart">

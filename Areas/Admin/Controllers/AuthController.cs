@@ -1,65 +1,38 @@
-// AuthController cho Admin
+//NTNguyen
+// AuthController cho Admin - chuyển đến AuthController chung
 using Microsoft.AspNetCore.Mvc;
-using PhoneStore.Data;
-using PhoneStore.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace PhoneStore.Areas.Admin.Controllers
 {
 	[Area("Admin")]
 	public class AuthController : Controller
 	{
-		private readonly ApplicationDbContext _context;
-
-		public AuthController(ApplicationDbContext context)
-		{
-			_context = context;
-		}
-
+		/// <summary>
+		/// Redirect trang Login của Admin về AuthController chung
+		/// </summary>
 		[HttpGet]
 		public IActionResult Login()
 		{
-			// Nếu đã đăng nhập, redirect về trang admin
-			if (HttpContext.Session.GetString("AdminLoggedIn") != null)
+			// Nếu đã đăng nhập với role Admin
+			var maNguoiDung = HttpContext.Session.GetString("UserId");
+			var vaiTro = HttpContext.Session.GetString("UserRole");
+			
+			if (maNguoiDung != null && vaiTro == "Admin")
 			{
-				return RedirectToAction("Index", "Home");
+				return RedirectToAction("Index", "Home", new { area = "Admin" });
 			}
-			return View();
+			
+			// Redirect về trang login chung
+			return RedirectToAction("Login", "Auth", new { area = "" });
 		}
 
-		[HttpPost]
-		public IActionResult Login(string username, string password)
-		{
-			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-			{
-				ViewBag.Error = "Vui lòng nhập tài khoản và mật khẩu";
-				return View();
-			}
-
-			// Dữ liệu tĩnh - Tài khoản admin mẫu
-			if (username == "admin" && password == "admin123")
-			{
-				// Lưu thông tin user vào session
-				HttpContext.Session.SetString("AdminLoggedIn", "1");
-				HttpContext.Session.SetString("AdminUsername", "admin");
-				HttpContext.Session.SetString("AdminFullName", "Quản trị viên");
-				
-				return RedirectToAction("Index", "Home");
-			}
-			else
-			{
-				ViewBag.Error = "Sai tài khoản hoặc mật khẩu. Dùng: admin/admin123";
-			}
-
-			return View();
-		}
-
+		///  Logout về AuthController chung
+		
 		[HttpGet]
 		public IActionResult Logout()
 		{
-			HttpContext.Session.Clear();
-			return RedirectToAction("Login");
+			return RedirectToAction("Logout", "Auth", new { area = "" });
 		}
 	}
 }
-// endCHNhu
+//endNTNguyen

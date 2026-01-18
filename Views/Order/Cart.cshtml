@@ -1,10 +1,9 @@
-﻿@*NTBinh 14/01/2026*@
+﻿@* NTBinh 14/01/2026 - Updated: Pagination, Clear Cart, Input Number Quantity *@
 @model List<PhoneStore.Models.CartItem>
 
 @{
     ViewData["Title"] = "Giỏ hàng";
-    Layout = "~/Views/Shared/Layout/_Layout.cshtml"; 
-
+    Layout = "~/Views/Shared/Layout/_Layout.cshtml";
 }
 
 <div class="section">
@@ -17,7 +16,7 @@
             </div>
         </div>
 
-        @if (Model.Count > 0)
+        @if (Model != null && Model.Count > 0)
         {
                 <div class="row">
                     <div class="col-md-12">
@@ -27,7 +26,7 @@
                                     <th class="text-center">Ảnh</th>
                                     <th>Sản phẩm</th>
                                     <th>Giá</th>
-                                    <th class="text-center">Số lượng</th>
+                                    <th class="text-center" style="width: 100px;">Số lượng</th>
                                     <th>Thành tiền</th>
                                     <th class="text-center">Xóa</th>
                                 </tr>
@@ -37,24 +36,34 @@
                             {
                                         <tr>
                                             <td class="text-center">
-                                                <img src="~/img/@item.Image" style="width: 60px; height: 60px; object-fit: contain;" 
-                                                     onerror="this.src='/images/no-image.png'" />
+                                                <img src="~/img/@item.Image" style="width: 60px; height: 60px; object-fit: contain;"
+                                                     onerror="this.src='/img/no-image.png'" />
                                             </td>
                                             <td style="vertical-align: middle;">
-                                                <strong>@item.ProductName</strong>
+                                                <strong>
+                                                    <a href="/Product/Details/@item.ProductId" style="color:inherit;">@item.ProductName</a>
+                                                </strong>
                                             </td>
                                             <td style="vertical-align: middle;">
                                         @item.Price.ToString("n0") đ
                                             </td>
+
                                             <td class="text-center" style="vertical-align: middle;">
-                                        @item.Quantity
+                                                <form asp-controller="Order" asp-action="UpdateCart" method="post">
+                                                    <input type="hidden" name="id" value="@item.ProductId" />
+
+                                                    <input type="number" name="quantity" value="@item.Quantity" min="1"
+                                                           style="width: 70px; text-align: center; padding: 5px; border: 1px solid #ccc; border-radius: 4px;"
+                                                           onchange="this.form.submit()" />
+                                                </form>
                                             </td>
+
                                             <td style="vertical-align: middle; color: #D10024; font-weight: bold;">
                                         @item.Total.ToString("n0") đ
                                             </td>
                                             <td class="text-center" style="vertical-align: middle;">
-                                                <a asp-controller="Order" asp-action="RemoveFromCart" asp-route-id="@item.ProductId" 
-                                                   class="btn btn-danger btn-xs" 
+                                                <a asp-controller="Order" asp-action="RemoveFromCart" asp-route-id="@item.ProductId"
+                                                   class="btn btn-danger btn-xs"
                                                    onclick="return confirm('Bạn muốn xóa sản phẩm này?');">
                                                     <i class="fa fa-trash"></i>
                                                 </a>
@@ -66,18 +75,70 @@
                     </div>
                 </div>
 
-                <div class="row" style="margin-top: 20px;">
-                    <div class="col-md-6">
-                        <a href="/" class="primary-btn" style="background-color: #333;">
-                            <i class="fa fa-arrow-left"></i> Tiếp tục mua sắm
-                        </a>
-                    </div>
-                    <div class="col-md-6 text-right" style="text-align: right;">
-                        <h4 style="margin-bottom: 20px;">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <h4 style="margin-top: 10px;">
                             TỔNG CỘNG: <span style="color: #D10024; font-size: 24px;">@ViewBag.TongTien.ToString("n0") đ</span>
                         </h4>
-                        <a asp-controller="Order" asp-action="Checkout" class="primary-btn">
-                            TIẾN HÀNH THANH TOÁN <i class="fa fa-arrow-right"></i>
+                    </div>
+                </div>
+
+            @if (ViewBag.TotalPages > 1)
+            {
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <div class="store-filter clearfix mt-4">
+                                    <ul class="store-pagination" style="display: inline-block; padding: 0;">
+                                @if (ViewBag.CurrentPage > 1)
+                                {
+                                                <li style="display:inline-block; margin:0 2px;">
+                                                    <a href="/Order/Cart?page=@(ViewBag.CurrentPage - 1)" 
+                                                       class="btn btn-default"><i class="fa fa-angle-left"></i></a>
+                                                </li>
+                                }
+
+                                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                                {
+                                                <li style="display:inline-block; margin:0 2px;">
+                                                    <a href="/Order/Cart?page=@i" 
+                                                       class="btn @(i == ViewBag.CurrentPage ? "btn-danger" : "btn-default")" 
+                                                       style="@(i == ViewBag.CurrentPage ? "background-color: #D10024; color: white;" : "")">
+                                            @i
+                                                    </a>
+                                                </li>
+                                }
+
+                                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                                {
+                                                <li style="display:inline-block; margin:0 2px;">
+                                                    <a href="/Order/Cart?page=@(ViewBag.CurrentPage + 1)" 
+                                                       class="btn btn-default"><i class="fa fa-angle-right"></i></a>
+                                                </li>
+                                }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+            }
+
+                <div class="row" style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                    <div class="col-md-6">
+                        <a asp-controller="Order" asp-action="ClearCart"
+                           class="btn btn-outline-danger"
+                           style="border: 1px solid #dc3545; color: #dc3545;"
+                           onclick="return confirm('CẢNH BÁO: Bạn có chắc chắn muốn xóa sạch giỏ hàng không?');">
+                            <i class="fa fa-trash"></i> Xóa tất cả giỏ hàng
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 text-right">
+                        <a href="/" class="btn btn-default" style="margin-right: 10px;">
+                            <i class="fa fa-arrow-left"></i> Tiếp tục mua sắm
+                        </a>
+
+                        <a asp-controller="Order" asp-action="Checkout" class="btn btn-success" 
+                           style="background-color: #D10024; border-color: #D10024; padding: 10px 30px; font-weight: bold;">
+                            TIẾN HÀNH THANH TOÁN <i class="fa fa-arrow-circle-right"></i>
                         </a>
                     </div>
                 </div>
@@ -86,11 +147,14 @@
         {
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <div class="alert alert-warning">
+                        <div class="alert alert-warning" style="background-color: #f9f9f9; border: 1px dashed #ddd; padding: 50px;">
+                            <i class="fa fa-shopping-cart" style="font-size: 50px; color: #ccc; margin-bottom: 20px;"></i>
                             <h4>Giỏ hàng của bạn đang trống!</h4>
                             <p>Hãy quay lại trang chủ để chọn mua những sản phẩm yêu thích nhé.</p>
                             <br>
-                            <a href="/" class="primary-btn">MUA SẮM NGAY</a>
+                            <a href="/" class="primary-btn" style="background-color: #D10024; color: white; padding: 10px 20px; border-radius: 5px;">
+                                MUA SẮM NGAY
+                            </a>
                         </div>
                     </div>
                 </div>

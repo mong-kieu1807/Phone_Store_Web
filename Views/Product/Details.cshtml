@@ -63,11 +63,17 @@
                     <h2 class="product-name">@Model.product_name</h2>
                     <div>
                         <div class="product-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star-o"></i>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= Model.rating)
+                                {
+                                    <i class="fa fa-star"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-star-o"></i>
+                                }
+                            }
                         </div>
                         <a class="review-link" href="#">10 Review(s) | Add your review</a>
                     </div>
@@ -99,23 +105,20 @@
                     </div>
 
                     <div class="add-to-cart">
-                        <div class="qty-label">
-                            Qty
-                            <div class="input-number">
-                                <input type="number" value="1" min="1" max="@Model.stock_quantity">
-                                <span class="qty-up">+</span>
-                                <span class="qty-down">-</span>
+                        <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@Model.product_id" method="get" onsubmit="return checkLoginBeforeAddToCart(event, @Model.product_id);">
+                            <div class="qty-label">
+                                Qty
+                                <div class="input-number">
+                                    <input type="number" value="1" min="1" max="@Model.stock_quantity">
+                                    <span class="qty-up">+</span>
+                                    <span class="qty-down">-</span>
+                                </div>
                             </div>
-                        </div>
-                        <button class="add-to-cart-btn" @(Model.stock_quantity <= 0 ? "disabled" : "")>
-                            <i class="fa fa-shopping-cart"></i> add to cart
-                        </button>
+                            <button type="submit" class="add-to-cart-btn" @(Model.stock_quantity <= 0 ? "disabled" : "")>
+                                <i class="fa fa-shopping-cart"></i> add to cart
+                            </button>
+                        </form>
                     </div>
-
-                    <ul class="product-btns">
-                        <li><a href="#"><i class="fa fa-heart-o"></i> add to wishlist</a></li>
-                        <li><a href="#"><i class="fa fa-exchange"></i> add to compare</a></li>
-                    </ul>
 
                     <ul class="product-links">
                         <li>Category:</li>
@@ -421,16 +424,17 @@
                                     }
                                 </h4>
                                 <div class="product-rating">
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star-o"></i>
-                                </div>
-                                <div class="product-btns">
-                                    <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-                                    <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-                                    <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= product.rating)
+                                        {
+                                            <i class="fa fa-star"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa fa-star-o"></i>
+                                        }
+                                    }
                                 </div>
                             </div>
                             <div class="add-to-cart">

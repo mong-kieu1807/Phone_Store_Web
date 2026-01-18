@@ -1,0 +1,371 @@
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PhoneStore</title>
+    
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="~/css/bootstrap.min.css"/>
+    
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    
+    <!-- Custom stlylesheet -->
+    <link type="text/css" rel="stylesheet" href="~/css/style.css"/>
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+
+<style>
+    .login-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        background: #f8f9fa;
+        padding: 40px 0;
+    }
+    .login-container {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+    .login-left {
+        background: linear-gradient(135deg, #D10024 0%, #a00019 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 40px;
+        position: relative;
+        overflow: hidden;
+    }
+    .login-left::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: pulse 15s ease-in-out infinite;
+    }
+    @@keyframes pulse {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(-10%, -10%); }
+    }
+    .phone-image {
+        max-width: 100%;
+        height: auto;
+        position: relative;
+        z-index: 1;
+    }
+    .login-right {
+        padding: 60px 50px;
+        background: #ffffff;
+    }
+    .login-header {
+        margin-bottom: 40px;
+        text-align: center;
+    }
+    .login-header h2 {
+        color: #D10024;
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .login-header p {
+        color: #666;
+        font-size: 16px;
+    }
+    .form-group {
+        margin-bottom: 25px;
+    }
+    .form-group label {
+        font-weight: 600;
+        color: #2d3436;
+        margin-bottom: 8px;
+        display: block;
+        font-size: 14px;
+    }
+    .form-control {
+        padding: 12px 15px;
+        font-size: 15px;
+        border: 2px solid #dfe6e9;
+        border-radius: 8px;
+        transition: all 0.3s;
+        width: 100%;
+    }
+    .form-control:focus {
+        border-color: #D10024;
+        box-shadow: 0 0 0 0.2rem rgba(209, 0, 36, 0.15);
+        outline: none;
+    }
+    .btn-login {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+        font-weight: 600;
+        background: #D10024;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    .btn-login:hover {
+        background: #a00019;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(209, 0, 36, 0.3);
+    }
+    .form-check-label {
+        color: #636e72;
+        font-size: 14px;
+    }
+    .forgot-password {
+        color: #D10024;
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.3s;
+    }
+    .forgot-password:hover {
+        color: #a00019;
+        text-decoration: underline;
+    }
+    .divider {
+        text-align: center;
+        margin: 30px 0;
+        position: relative;
+    }
+    .divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #dfe6e9;
+    }
+    .divider span {
+        background: white;
+        padding: 0 15px;
+        position: relative;
+        color: #b2bec3;
+        font-size: 14px;
+    }
+    .register-link {
+        text-align: center;
+    }
+    .register-link p {
+        color: #636e72;
+        margin-bottom: 5px;
+    }
+    .register-link a {
+        color: #D10024;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    .register-link a:hover {
+        color: #a00019;
+        text-decoration: underline;
+    }
+    @@media (max-width: 768px) {
+        .login-left {
+            display: none;
+        }
+        .login-right {
+            padding: 40px 30px;
+        }
+    }
+</style>
+
+<div class="login-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-12">
+                <div class="login-container">
+                    <div class="row g-0">
+                        <!-- BÊN TRÁI - HÌNH ĐIỆN THOẠI -->
+                        <div class="col-md-6">
+                            <div class="login-left">
+                                <div class="text-center">
+                                    <div class="phone-mockup">
+                                        <svg viewBox="0 0 300 600" xmlns="http://www.w3.org/2000/svg" style="max-width: 280px; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));">
+                                            <!-- Phone Frame -->
+                                            <rect x="20" y="10" width="260" height="580" rx="30" fill="#1a1a1a"/>
+                                            <rect x="30" y="20" width="240" height="560" rx="25" fill="#fff"/>
+                                            
+                                            <!-- Notch -->
+                                            <rect x="110" y="25" width="80" height="20" rx="10" fill="#1a1a1a"/>
+                                            
+                                            <!-- Screen Content - Status Bar -->
+                                            <g opacity="0.3">
+                                                <text x="50" y="40" font-family="Arial" font-size="12" fill="#1a1a1a">9:41</text>
+                                                <circle cx="240" cy="35" r="3" fill="#1a1a1a"/>
+                                                <circle cx="250" cy="35" r="3" fill="#1a1a1a"/>
+                                                <circle cx="260" cy="35" r="3" fill="#1a1a1a"/>
+                                            </g>
+                                            
+                                            <!-- Phone Icon -->
+                                            <g transform="translate(150, 180)">
+                                                <circle cx="0" cy="0" r="60" fill="#D10024" opacity="0.1"/>
+                                                <path d="M-20,-20 L-15,-25 C-10,-30 0,-28 5,-23 L10,-18 C13,-15 13,-10 10,-7 L5,-2 C8,3 15,10 20,15 L25,10 C28,7 33,7 36,10 L41,15 C46,20 48,30 43,35 L38,40 C25,45 -15,5 -20,-8 L-25,-13 C-30,-18 -25,-25 -20,-20 Z" fill="#fff" stroke="#D10024" stroke-width="2"/>
+                                            </g>
+                                            
+                                            <!-- App Icons -->
+                                            <rect x="50" y="280" width="50" height="50" rx="12" fill="#D10024" opacity="0.8"/>
+                                            <rect x="125" y="280" width="50" height="50" rx="12" fill="#D10024" opacity="0.6"/>
+                                            <rect x="200" y="280" width="50" height="50" rx="12" fill="#D10024" opacity="0.4"/>
+                                            
+                                            <rect x="50" y="350" width="50" height="50" rx="12" fill="#1a1a1a" opacity="0.3"/>
+                                            <rect x="125" y="350" width="50" height="50" rx="12" fill="#1a1a1a" opacity="0.3"/>
+                                            <rect x="200" y="350" width="50" height="50" rx="12" fill="#1a1a1a" opacity="0.3"/>
+                                            
+                                            <!-- Navigation Bar -->
+                                            <rect x="120" y="540" width="60" height="5" rx="3" fill="#1a1a1a" opacity="0.3"/>
+                                            
+                                            <!-- Side Buttons -->
+                                            <rect x="10" y="120" width="8" height="40" rx="2" fill="#2d2d2d"/>
+                                            <rect x="10" y="180" width="8" height="60" rx="2" fill="#2d2d2d"/>
+                                            <rect x="282" y="150" width="8" height="50" rx="2" fill="#2d2d2d"/>
+                                        </svg>
+                                    </div>
+                                    <h3 style="color: white; margin-top: 40px; font-size: 32px; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+                                        <i class="fa fa-mobile" style="font-size: 36px; margin-right: 10px;"></i>PhoneStore
+                                    </h3>
+                                    <div style="margin-top: 30px;">
+                                        <span style="display: inline-block; padding: 8px 20px; background: rgba(255,255,255,0.2); border-radius: 20px; color: white; font-size: 14px; margin: 5px;">
+                                            <i class="fa fa-check"></i> Bảo hành chính hãng
+                                        </span>
+                                        <span style="display: inline-block; padding: 8px 20px; background: rgba(255,255,255,0.2); border-radius: 20px; color: white; font-size: 14px; margin: 5px;">
+                                            <i class="fa fa-truck"></i> Giao hàng nhanh
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BÊN PHẢI - FORM ĐĂNG NHẬP -->
+                        <div class="col-md-6">
+                            <div class="login-right">
+                                <!-- HEADER -->
+                                <div class="login-header">
+                                    <h2><i class="fa fa-sign-in"></i> Đăng nhập</h2>
+                                </div>
+
+                                <!-- THÔNG BÁO -->
+                                @if (TempData["Success"] != null)
+                                {
+                                    <div class="alert alert-success" style="border-radius: 8px;">
+                                        <i class="fa fa-check-circle"></i> @TempData["Success"]
+                                    </div>
+                                }
+
+                                @if (ViewBag.Error != null)
+                                {
+                                    <div class="alert alert-danger" style="border-radius: 8px;">
+                                        <i class="fa fa-exclamation-circle"></i> @ViewBag.Error
+                                    </div>
+                                }
+
+                                <!-- FORM ĐĂNG NHẬP -->
+                                <form asp-action="Login" method="post">
+                                    @Html.AntiForgeryToken()
+                                    
+                                    <!-- Username -->
+                                    <div class="form-group">
+                                        <label for="username">
+                                            <i class="fa fa-user"></i> Tên đăng nhập <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="username" 
+                                               name="username" 
+                                               required 
+                                               placeholder="Nhập tên đăng nhập" 
+                                               autofocus>
+                                    </div>
+
+                                    <!-- Password -->
+                                    <div class="form-group">
+                                        <label for="password">
+                                            <i class="fa fa-lock"></i> Mật khẩu <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="password" 
+                                               class="form-control" 
+                                               id="password" 
+                                               name="password" 
+                                               required 
+                                               placeholder="Nhập mật khẩu">
+                                    </div>
+
+                                    <!-- Remember & Forgot Password -->
+                                    <div class="form-group">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="remember">
+                                                <label class="form-check-label" for="remember">
+                                                    Ghi nhớ đăng nhập
+                                                </label>
+                                            </div>
+                                            <a href="#" class="forgot-password">
+                                                Quên mật khẩu?
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <!-- BUTTON ĐĂNG NHẬP -->
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-login">
+                                            <i class="fa fa-sign-in"></i> ĐĂNG NHẬP
+                                        </button>
+                                    </div>
+
+                                    <!-- DIVIDER -->
+                                    <div class="divider">
+                                        <span>Hoặc</span>
+                                    </div>
+
+                                    <!-- LINK ĐĂNG KÝ -->
+                                    <div class="register-link">
+                                        <p style="color: #666; margin-bottom: 10px;">
+                                            Chưa có tài khoản? 
+                                            <a asp-action="Register">
+                                                <i class="fa fa-user-plus"></i> Đăng ký ngay
+                                            </a>
+                                        </p>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery Plugins -->
+<script src="~/js/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/bootstrap.min.js"></script>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Validation Scripts -->
+@await Html.PartialAsync("_ValidationScriptsPartial")
+
+</body>
+</html>

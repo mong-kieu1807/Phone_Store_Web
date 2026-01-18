@@ -15,18 +15,20 @@
 	<ul class="nav navbar-top-links navbar-right">
 		<li class="dropdown">
 			<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-				<i class="fa fa-user fa-fw"></i> Admin <i class="fa fa-caret-down"></i>
+				<i class="fa fa-user fa-fw"></i> 
+				@(Context.Session.GetString("FullName") ?? "Admin")
 			</a>
 			<ul class="dropdown-menu dropdown-user">
 				<li>
-					<a href="#"><i class="fa fa-user fa-fw"></i> Thông tin tài khoản</a>
-				</li>
-				<li>
-					<a href="#"><i class="fa fa-gear fa-fw"></i> Cài đặt</a>
+					<a href="#">
+						<i class="fa fa-user fa-fw"></i> Thông tin tài khoản
+					</a>
 				</li>
 				<li class="divider"></li>
 				<li>
-					<a asp-area="Admin" asp-controller="Auth" asp-action="Logout"><i class="fa fa-sign-out fa-fw"></i> Đăng xuất</a>
+					<a asp-area="" asp-controller="Auth" asp-action="Logout">
+						<i class="fa fa-sign-out fa-fw"></i> Đăng xuất
+					</a>
 				</li>
 			</ul>
 		</li>
@@ -37,7 +39,7 @@
 		<ul>
 			<li class="active">
 				<a asp-area="Admin" asp-controller="Home" asp-action="Index">
-					<i class="fa fa-dashboard"></i> Dashboard
+					<i class="fa fa-dashboard"></i> Tổng quan
 				</a>
 			</li>
 			<li>

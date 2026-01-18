@@ -1,11 +1,13 @@
-// CHNhu
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhoneStore.Data;
+using PhoneStore.Helper;
 
 namespace PhoneStore.Areas.Admin.Controllers
 {
 	[Area("Admin")]
+	[AdminAuthorize] // Bảo vệ toàn bộ controller, chỉ Admin mới truy cập được
 	public class HomeController : Controller
 	{
 		private readonly ApplicationDbContext _context;
@@ -34,7 +36,7 @@ namespace PhoneStore.Areas.Admin.Controllers
 
 			// Sản phẩm sắp hết hàng
 			ViewBag.LowStockProducts = await _context.Products
-				.Where(p => p.stock_quantity < 10)
+				.Where(p => p.stock_quantity < 5)
 				.OrderBy(p => p.stock_quantity)
 				.Take(5)
 				.ToListAsync();
@@ -44,4 +46,3 @@ namespace PhoneStore.Areas.Admin.Controllers
 
 	}
 }
-// endCHNhu

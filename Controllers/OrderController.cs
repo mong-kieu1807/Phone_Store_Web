@@ -4,9 +4,11 @@ using PhoneStore.Models;
 using PhoneStore.Data;
 using Microsoft.EntityFrameworkCore; // Cần cái này để dùng FindAsync
 using System.Text.Json; // Cần cái này để xử lý Session
+using PhoneStore.Helper; // Import để dùng [Authorize]
 
 namespace PhoneStore.Controllers
 {
+    [PhoneStore.Helper.Authorize] // Yêu cầu đăng nhập cho toàn bộ controller
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -154,10 +156,17 @@ namespace PhoneStore.Controllers
             var gioHang = LayGioHang();
             if (gioHang.Count == 0) return RedirectToAction("Cart");
 
+            // Lấy user_id từ Session
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
             // 1. Tạo Bill (Dữ liệu thật từ Form + Session)
             var bill = new Bill
             {
-                user_id = 2, // Tạm thời gán User ID cố định (vì chưa làm Login)
+                user_id = userId.Value,
                 total_amount = gioHang.Sum(x => x.Total),
                 shipping_status = "Chờ xử lý",
                 payment_method_id = 1,

@@ -1,11 +1,13 @@
-// CHNhu
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhoneStore.Data;
+using PhoneStore.Helper;
 
 namespace PhoneStore.Areas.Admin.Controllers
 {
 	[Area("Admin")]
+	[AdminAuthorize] // Bảo vệ toàn bộ controller, chỉ Admin mới truy cập được
 	public class HomeController : Controller
 	{
 		private readonly ApplicationDbContext _context;
@@ -44,4 +46,3 @@ namespace PhoneStore.Areas.Admin.Controllers
 
 	}
 }
-// endCHNhu

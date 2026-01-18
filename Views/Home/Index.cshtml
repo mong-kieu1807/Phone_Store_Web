@@ -233,7 +233,7 @@
                                             </div>
                                         </div>
                                         <div class="add-to-cart">
-                                            <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@item.product_id" method="get" style="display:block;">
+                                            <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@item.product_id" method="get" style="display:block;" onsubmit="return checkLoginBeforeAddToCart(event, @item.product_id);">
 
                                                     <button type="submit" class="add-to-cart-btn">
                                                         <i class="fa fa-shopping-cart"></i> add to cart
@@ -314,7 +314,7 @@
                                         </div>
                                     </div>
                                     <div class="add-to-cart">
-                                        <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@item.product_id" method="get" style="display:block;">
+                                        <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@item.product_id" method="get" style="display:block;" onsubmit="return checkLoginBeforeAddToCart(event, @item.product_id);">
                                                 <button type="submit" class="add-to-cart-btn">
                                                     <i class="fa fa-shopping-cart"></i> add to cart
                                                 </button>

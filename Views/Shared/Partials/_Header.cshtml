@@ -14,33 +14,44 @@
 			<!-- /LOGO -->
 			
 			<!-- SEARCH BAR -->
-			<div class="col-md-6">
-				<div class="header-search">
-					<form>
-						<input class="input" placeholder="Search here">
-						<button class="search-btn">Search</button>
-					</form>
+			@if (ViewData["HideSearchAndNav"] == null || !(bool)ViewData["HideSearchAndNav"])
+			{
+				<div class="col-md-6">
+					<div class="header-search">
+						<form>
+							<input class="input" placeholder="Search here">
+							<button class="search-btn">Search</button>
+						</form>
+					</div>
 				</div>
+			}
+			else
+			{
+				<div class="col-md-6"></div>
+			}
 			<!-- /SEARCH BAR -->
 			<!-- ACCOUNT -->
 			<div class="col-md-3 clearfix">
-				<div class="header-ctn">
-					<!-- Cart --> 
-					<!--NTBinh 14/01/2026-->
-					<div class="dropdown">
-						@await Component.InvokeAsync("Cart")
-					</div>
-					<!-- /Cart -->
+				@if (ViewData["HideSearchAndNav"] == null || !(bool)ViewData["HideSearchAndNav"]) //PNSon 18/01/2026 Ẩn Cart khi ở trang Thông tin cá nhân
+				{
+					<div class="header-ctn">
+						<!-- Cart --> 
+						<!--NTBinh 14/01/2026-->
+						<div class="dropdown">
+							@await Component.InvokeAsync("Cart")
+						</div>
+						<!-- /Cart -->
 
-					<!-- Menu Toogle -->
-					<div class="menu-toggle">
-						<a href="#">
-							<i class="fa fa-bars"></i>
-							<span>Menu</span>
-						</a>
+						<!-- Menu Toogle -->
+						<div class="menu-toggle">
+							<a href="#">
+								<i class="fa fa-bars"></i>
+								<span>Menu</span>
+							</a>
+						</div>
+						<!-- /Menu Toogle -->
 					</div>
-					<!-- /Menu Toogle -->
-				</div>
+				}
 			</div>
 			<!-- /ACCOUNT -->
 		</div>

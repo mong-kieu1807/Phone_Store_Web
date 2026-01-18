@@ -43,5 +43,74 @@ namespace PhoneStore.Controllers
             ViewBag.Success = "Đổi mật khẩu thành công! Mật khẩu mới là: " + newPassword;
             return View();
         }
+        public IActionResult InformationUser()
+        {
+            // Lấy userId từ Session
+            var userId = HttpContext.Session.GetInt32("UserId");
+            
+            // Nếu chưa đăng nhập, redirect về trang đăng nhập
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+            
+            // Lấy thông tin user từ Database
+            var user = _context.Users.FirstOrDefault(u => u.user_id == userId);
+            
+            if (user == null)
+            {
+                ViewBag.Error = "Không tìm thấy thông tin người dùng!";
+                return View();
+            }
+
+            // Ẩn Search Bar và Navigation
+            ViewData["HideSearchAndNav"] = true;
+            return View(user);
+        }
+
+        [HttpPost]
+        public IActionResult InformationUser(User model)
+        {
+            // Lấy userId từ Session
+            var userId = HttpContext.Session.GetInt32("UserId");
+            
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            // Lấy user từ Database
+            var user = _context.Users.FirstOrDefault(u => u.user_id == userId);
+            
+            if (user == null)
+            {
+                ViewBag.Error = "Không tìm thấy thông tin người dùng!";
+                return View(user);
+            }
+
+            // Cập nhật thông tin (không cập nhật username và password)
+            user.full_name = model.full_name;
+            user.email = model.email;
+            user.phone = model.phone;
+            user.address = model.address;
+            user.updated_at = DateTime.Now;
+
+            try
+            {
+                _context.SaveChanges();
+                ViewBag.Message = "Cập nhật thông tin thành công!";
+                // Cập nhật Session với thông tin mới
+                HttpContext.Session.SetString("FullName", user.full_name ?? "User");
+                HttpContext.Session.SetString("UserEmail", user.email ?? "");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Lỗi khi cập nhật thông tin: " + ex.Message;
+            }
+
+            ViewData["HideSearchAndNav"] = true;
+            return View(user);
+        }
+        
     }
 }

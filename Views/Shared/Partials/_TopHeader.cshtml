@@ -31,6 +31,16 @@
                             <li><a class="dropdown-item" href="/Admin/Home/Index"><i class="fa fa-dashboard"></i> Trang quản trị</a></li>
                             <li><hr class="dropdown-divider"></li>
                         }
+                         <li>
+                            <!--PNSon 18/01/2026 Ẩn khi ở trang Thông tin cá nhân-->
+                            @if (ViewData["HideSearchAndNav"] == null || !(bool)ViewData["HideSearchAndNav"])
+                            {
+                                //Thông tin cá nhân
+                                <a class="dropdown-item text-danger" href="@Url.Action("InformationUser", "Account")">
+                                    <i class="fa fa-address-book me-2"></i> Thông tin cá nhân
+                                </a>
+                            }
+                        </li>
                         <li>
                             <a class="dropdown-item text-danger" href="@Url.Action("Logout", "Auth")">
                                 <i class="fa fa-sign-out"></i> Đăng xuất

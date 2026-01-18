@@ -1,0 +1,198 @@
+@model PhoneStore.Models.User
+
+@{
+    ViewData["Title"] = "Quản Lý Tài Khoản";
+}
+
+<!-- BREADCRUMB -->
+<div id="breadcrumb" class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="breadcrumb-tree">
+                    <li><a href="/">Trang Chủ</a></li>
+                    <li class="active">Tài Khoản Cá Nhân</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /BREADCRUMB -->
+
+<!-- SECTION -->
+<div class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="account-form">
+                    <!-- Section Title -->
+                    <div class="section-title">
+                        <h3 class="title">
+                            <i class="fa fa-user-circle"></i> Quản Lý Tài Khoản Cá Nhân
+                        </h3>
+                    </div>
+
+                    <!-- Messages -->
+                    @if (ViewData["Message"] != null)
+                    {
+                        <div class="alert alert-success" style="padding: 12px 15px; background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; border-radius: 4px; margin-bottom: 20px;">
+                            <i class="fa fa-check-circle"></i> @ViewData["Message"]
+                        </div>
+                    }
+
+                    @if (ViewData["Error"] != null)
+                    {
+                        <div class="alert alert-danger" style="padding: 12px 15px; background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; border-radius: 4px; margin-bottom: 20px;">
+                            <i class="fa fa-exclamation-circle"></i> @ViewData["Error"]
+                        </div>
+                    }
+
+                    <form id="userForm" method="post" action="/AccountUser/Update">
+                        <!-- Username (readonly) -->
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="username" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2B2D42;">
+                                <i class="fa fa-user"></i> Tên Đăng Nhập
+                            </label>
+
+                            <input type="text" id="username" class="input" value="@Model?.username" disabled style="background-color: #f5f5f5;">
+                            <small style="display: block; margin-top: 6px; color: #8D99AE;">Không thể thay đổi tên đăng nhập</small>
+                        </div>
+
+                        <!-- Họ và tên -->
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="full_name" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2B2D42;">
+                                <i class="fa fa-signature"></i> Họ và Tên <span style="color: #D10024;">*</span>
+                            </label>
+                            <input type="text" id="full_name" class="input" name="full_name" value="@Model?.full_name" required placeholder="Nhập họ và tên">
+                            <small style="display: block; margin-top: 6px; color: #D10024; display: none;" id="fullNameError">Vui lòng nhập họ và tên</small>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="email" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2B2D42;">
+                                <i class="fa fa-envelope"></i> Email <span style="color: #D10024;">*</span>
+                            </label>
+                            <input type="email" id="email" class="input" name="email" value="@Model?.email" required placeholder="Nhập địa chỉ email">
+                            <small style="display: block; margin-top: 6px; color: #D10024; display: none;" id="emailError">Vui lòng nhập email hợp lệ</small>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="phone" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2B2D42;">
+                                <i class="fa fa-phone"></i> Số Điện Thoại
+                            </label>
+                            <input type="tel" id="phone" class="input" name="phone" value="@Model?.phone" placeholder="Ví dụ: 0901234567">
+                        </div>
+
+                        <!-- Address -->
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="address" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2B2D42;">
+                                <i class="fa fa-map-marker"></i> Địa Chỉ
+                            </label>
+                            <textarea id="address"class="input"name="address"rows="3"placeholder="Nhập địa chỉ của bạn"style="min-height: 80px; resize: vertical;">@Model?.address</textarea>
+                        </div>
+
+                        <!-- System Information Section -->
+                        <div style="margin-top: 30px; padding: 20px; background-color: #f8f9fa; border: 1px solid #E4E7ED; border-radius: 4px;">
+                            <h5 style="margin-bottom: 15px; font-weight: 600; color: #2B2D42;">
+                                <i class="fa fa-info-circle" style="color: #D10024;"></i> Thông Tin Hệ Thống
+                            </h5>
+
+                            <!-- Role -->
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label for="role" style="display: block; margin-bottom: 6px; font-weight: 500; color: #2B2D42; font-size: 13px;">
+                                    <i class="fa fa-shield"></i> Vai Trò
+                                </label>
+                                <input type="text" id="role" class="input" value="@(Model?.role == "Admin" ? "Quản Trị Viên" : "Người Dùng")" disabled style="background-color: #f5f5f5; font-size: 13px;">
+                            </div>
+
+                            <!-- Created At -->
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label for="created_at" style="display: block; margin-bottom: 6px; font-weight: 500; color: #2B2D42; font-size: 13px;">
+                                    <i class="fa fa-calendar"></i> Ngày Tạo
+                                </label>
+                                <input type="text" id="created_at" class="input" value="@Model?.created_at?.ToString("dd/MM/yyyy HH:mm:ss")" disabled style="background-color: #f5f5f5; font-size: 13px;">
+                            </div>
+
+                            <!-- Updated At -->
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="updated_at" style="display: block; margin-bottom: 6px; font-weight: 500; color: #2B2D42; font-size: 13px;">
+                                    <i class="fa fa-clock-o"></i> Ngày Cập Nhật
+                                </label>
+                                <input type="text" id="updated_at" class="input" value="@Model?.updated_at?.ToString("dd/MM/yyyy HH:mm:ss")" disabled style="background-color: #f5f5f5; font-size: 13px;">
+                            </div>
+                        </div>
+
+                        <!-- Info Section -->
+                        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #E4E7ED;">
+                            <p style="margin: 10px 0; color: #8D99AE; font-size: 13px;">
+                                <i class="fa fa-lock" style="color: #D10024;"></i> <strong>Bảo mật:</strong> Nếu bạn muốn đổi mật khẩu,
+                                <a href="/AccountUser/ChangePassword" style="color: #D10024;">nhấp vào đây</a>
+                            </p>
+                            <p style="margin: 10px 0; color: #8D99AE; font-size: 13px;">
+                                <i class="fa fa-info-circle"></i> <strong>Ghi chú:</strong> Tên đăng nhập không thể thay đổi. 
+                                Các trường có dấu <span style="color: #D10024;">*</span> là bắt buộc.
+                            </p>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div style="margin-top: 30px; display: flex; gap: 10px;">
+                            <button type="submit" class="primary-btn" style="border-radius: 4px; padding: 10px 25px;">
+                                <i class="fa fa-save"></i> Cập Nhật Thông Tin
+                            </button>
+                            <button type="reset" style="display: inline-block; padding: 10px 25px; background-color: #FFF; border: 1px solid #E4E7ED; color: #2B2D42; text-transform: uppercase; font-weight: 700; border-radius: 4px; cursor: pointer; transition: 0.2s all;">
+                                <i class="fa fa-redo"></i> Đặt Lại
+                            </button>
+                            <a href="/" style="display: inline-flex; align-items: center; padding: 10px 25px; background-color: #FFF; border: 1px solid #E4E7ED; color: #2B2D42; text-transform: uppercase; font-weight: 700; border-radius: 4px; text-decoration: none; transition: 0.2s all;">
+                                <i class="fa fa-arrow-left" style="margin-right: 5px;"></i> Quay Lại
+                            </a>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /SECTION -->
+
+@section Scripts {
+    <script>
+        document.getElementById('userForm').addEventListener('submit', function (e) {
+            const fullName = document.getElementById('full_name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!fullName) {
+                e.preventDefault();
+                document.getElementById('fullNameError').style.display = 'block';
+            }
+            
+            if (!email || !email.includes(String.fromCharCode(64))) {
+
+                e.preventDefault();
+                document.getElementById('emailError').style.display = 'block';
+            }
+        });
+
+        // Xóa thông báo lỗi khi nhập lại
+        document.getElementById('full_name').addEventListener('input', function() {
+            document.getElementById('fullNameError').style.display = 'none';
+        });
+
+        document.getElementById('email').addEventListener('input', function() {
+            document.getElementById('emailError').style.display = 'none';
+        });
+
+        // Hiệu ứng khi trỏ vào nút
+        document.querySelectorAll('button[type="reset"], a[href="/"]').forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f0f0f0';
+                this.style.borderColor = '#D10024';
+            });
+            btn.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '#FFF';
+                this.style.borderColor = '#E4E7ED';
+            });
+        });
+    </script>
+}

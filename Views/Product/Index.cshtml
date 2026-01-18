@@ -227,10 +227,6 @@
                             </select>
                         </label>
                     </div>
-                    <ul class="store-grid">
-                        <li class="active"><i class="fa fa-th"></i></li>
-                        <li><a href="#"><i class="fa fa-th-list"></i></a></li>
-                    </ul>
                 </div>
                 <!-- /Store Top Filter -->
 
@@ -265,7 +261,9 @@
                                     </h4>
                                 </div>
                                 <div class="add-to-cart">
-                                    <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                                    <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@item.product_id" method="get" style="display:block;">
+                                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

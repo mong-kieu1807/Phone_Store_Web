@@ -1,0 +1,374 @@
+@model List<PhoneStore.Models.Product>
+
+@{
+    ViewData["Title"] = "Sản phẩm đã mua";
+}
+@functions {
+    public string GetFirstImage(string images)
+    {
+        if (string.IsNullOrEmpty(images))
+            return "no-image.png";
+
+        return images.Split(',')[0];
+    }
+}
+
+<div class="purchased-container">
+    <div class="purchased-header">
+        <div class="header-top">
+            <h1><i class="fa fa-check-circle"></i> Sản phẩm đã mua</h1>
+            <a asp-area="" asp-controller="Account" asp-action="InformationUser" class="btn btn-back">
+                <i class="fa fa-arrow-left"></i> Quay lại
+            </a>
+        </div>
+        <p class="text-muted">Danh sách các sản phẩm bạn đã mua thành công</p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="fa fa-inbox"></i>
+            <h3>Chưa có sản phẩm đã mua</h3>
+            <p>Bạn chưa mua bất kỳ sản phẩm nào. Hãy khám phá cửa hàng của chúng tôi!</p>
+            <a asp-area="" asp-controller="Product" asp-action="Index" class="btn btn-primary">
+                <i class="fa fa-shopping-cart"></i> Bắt đầu mua sắm
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="products-count">
+            <i class="fa fa-list"></i> Tổng: <strong>@Model.Count</strong> sản phẩm đã mua
+        </div>
+        
+        <div class="products-grid">
+            @foreach (var p in Model)
+            {
+                <div class="product-item">
+                    <div class="product-image">
+                        <img src="@Url.Content("~/img/" + GetFirstImage(p.image))" alt="@p.product_name" onerror="this.onerror=null;this.src='@Url.Content("~/img/no-image.png")';">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">@p.product_name</h3>
+                        <p class="product-brand">
+                            @if (!string.IsNullOrEmpty(p.brand))
+                            {
+                                <span><i class="fa fa-building"></i> @p.brand</span>
+                            }
+                        </p>
+                        <div class="product-footer">
+                            <span class="product-price">@p.price.ToString("N0") ₫</span>
+                            <span class="product-badge">
+                                <i class="fa fa-check"></i> Đã mua
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+<style>
+    .purchased-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+
+    .purchased-header {
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    .btn-back {
+        position: absolute;
+        left: 0;
+        background: #6c757d;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background: #5a6268;
+        transform: translateX(-2px);
+    }
+
+    .btn-back i {
+        font-size: 13px;
+    }
+
+    .purchased-header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .purchased-header h1 i {
+        color: #27ae60;
+        margin-right: 10px;
+    }
+
+    .purchased-header p {
+        font-size: 16px;
+        color: #7f8c8d;
+    }
+
+    .text-muted {
+        color: #7f8c8d;
+    }
+
+    /* Products Count */
+    .products-count {
+        background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+        border-left: 4px solid #27ae60;
+        padding: 15px 20px;
+        border-radius: 6px;
+        margin-bottom: 30px;
+        font-size: 14px;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .products-count i {
+        margin-right: 8px;
+        color: #27ae60;
+    }
+
+    /* Products Grid */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .product-item {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 1px solid #ecf0f1;
+    }
+
+    .product-item:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        transform: translateY(-6px);
+    }
+
+    .product-image {
+        width: 100%;
+        height: 200px;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .product-item:hover .product-image img {
+        transform: scale(1.05);
+    }
+
+    .product-info {
+        padding: 15px;
+    }
+
+    .product-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0 0 8px 0;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 34px;
+    }
+
+    .product-brand {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin: 0 0 12px 0;
+    }
+
+    .product-brand i {
+        margin-right: 4px;
+        color: #3498db;
+    }
+
+    .product-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 10px;
+        border-top: 1px solid #ecf0f1;
+    }
+
+    .product-price {
+        font-size: 16px;
+        font-weight: 700;
+        color: #e74c3c;
+    }
+
+    .product-badge {
+        background: #e8f5e9;
+        color: #27ae60;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .product-badge i {
+        font-size: 10px;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .empty-state i {
+        font-size: 80px;
+        color: #ecf0f1;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .empty-state h3 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        font-size: 14px;
+        color: #7f8c8d;
+        margin-bottom: 30px;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2980b9 0%, #1f618d 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn i {
+        font-size: 14px;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .purchased-container {
+            padding: 20px 15px;
+        }
+
+        .purchased-header h1 {
+            font-size: 24px;
+        }
+
+        .products-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .product-image {
+            height: 150px;
+        }
+
+        .product-item:hover {
+            transform: translateY(-2px);
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .purchased-header h1 {
+            font-size: 20px;
+        }
+
+        .products-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .product-image {
+            height: 120px;
+        }
+
+        .product-info {
+            padding: 10px;
+        }
+
+        .product-name {
+            font-size: 12px;
+            min-height: 28px;
+        }
+
+        .empty-state {
+            padding: 60px 15px;
+        }
+
+        .empty-state i {
+            font-size: 60px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+        }
+    }
+</style>

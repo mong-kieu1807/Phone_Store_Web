@@ -23,16 +23,28 @@
 <div class="section">
     <div class="container">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <div class="account-form">
-                    <!-- Section Title -->
-                    <div class="section-title">
-                        <h3 class="title">
-                            <i class="fa fa-user-circle"></i> Quản Lý Tài Khoản Cá Nhân
-                        </h3>
+            <!-- Account Sidebar -->
+            <div class="col-md-3">
+                <div class="account-sidebar">
+                    <div class="sidebar-header">
+                        <i class="fa fa-cog"></i> Quản Lý Tài Khoản
                     </div>
+                    <a href="/Account/InformationUser" class="sidebar-link active">
+                        <i class="fa fa-user"></i> Thông tin cá nhân
+                    </a>
+                    <a href="/Account/Bills" class="sidebar-link">
+                        <i class="fa fa-file-text"></i> Đơn hàng của tôi
+                    </a>
+                    <a href="/Account/PurchasedProducts" class="sidebar-link">
+                        <i class="fa fa-shopping-bag"></i> Sản phẩm đã mua
+                    </a>
+                </div>
+            </div>
 
-                    <!-- Messages -->
+            <!-- Content -->
+            <div class="col-md-9">
+                <div class="account-form">
+                     <!-- Messages -->
                     @if (ViewData["Message"] != null)
                     {
                         <div class="alert alert-success" style="padding: 12px 15px; background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; border-radius: 4px; margin-bottom: 20px;">
@@ -46,6 +58,12 @@
                             <i class="fa fa-exclamation-circle"></i> @ViewData["Error"]
                         </div>
                     }
+                    <!-- Section Title -->
+                    <div class="section-title">
+                        <h3 class="title">
+                            <i class="fa fa-user-circle"></i> Quản Lý Tài Khoản Cá Nhân
+                        </h3>
+                    </div>
 
                     <form id="userForm" method="post" action="/Account/InformationUser">
                         <!-- Username (readonly) -->
@@ -152,10 +170,156 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
 </div>
 <!-- /SECTION -->
+<style>
+    /* Account Sidebar */
+    .account-sidebar {
+        background: white;
+        border: 1px solid #e3e6f0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+        position: sticky;
+        top: 20px;
+    }
 
+    .sidebar-header {
+        background: linear-gradient(135deg, #d10024 0%, #b8001f 100%);
+        color: white;
+        padding: 15px 16px;
+        font-weight: 600;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .sidebar-header i {
+        font-size: 16px;
+    }
+
+    .sidebar-link {
+        display: block;
+        padding: 14px 16px;
+        color: #2b2d42;
+        font-weight: 500;
+        text-decoration: none;
+        border-bottom: 1px solid #e3e6f0;
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
+
+    .sidebar-link i {
+        margin-right: 10px;
+        color: #d10024;
+        width: 16px;
+        text-align: center;
+    }
+
+    .sidebar-link:hover {
+        background: #f5f7fa;
+        color: #d10024;
+        padding-left: 20px;
+    }
+
+    .sidebar-link.active {
+        background: linear-gradient(135deg, #fff5f7 0%, #fffafc 100%);
+        color: #d10024;
+        border-left: 4px solid #d10024;
+        padding-left: 16px;
+        margin-bottom: -1px;
+    }
+
+    .sidebar-link.active i {
+        color: #d10024;
+    }
+
+    /* Account Form */
+    .account-form {
+        background: white;
+        border: 1px solid #e3e6f0;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .section-title h3 {
+        color: #d10024;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        color: #2b2d42;
+        font-weight: 500;
+    }
+
+    .form-group label i {
+        color: #d10024;
+        margin-right: 6px;
+    }
+
+    .input {
+        border: 1px solid #e3e6f0 !important;
+        padding: 10px 12px !important;
+        border-radius: 4px !important;
+        transition: all 0.3s ease;
+    }
+
+    .input:focus {
+        border-color: #d10024 !important;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(209, 0, 36, 0.1);
+    }
+
+    .primary-btn {
+        background: linear-gradient(135deg, #d10024 0%, #b8001f 100%);
+        color: white;
+        padding: 10px 25px;
+        border: none;
+        border-radius: 4px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .primary-btn:hover {
+        background: linear-gradient(135deg, #b8001f 0%, #9a001a 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(209, 0, 36, 0.3);
+    }
+
+    .primary-btn i {
+        font-size: 14px;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .account-sidebar {
+            margin-bottom: 20px;
+            position: static;
+        }
+
+        .account-form {
+            padding: 20px;
+        }
+
+        .col-md-3,
+        .col-md-9 {
+            width: 100%;
+        }
+    }
+
+</style>
 @section Scripts {
     <script>
         document.getElementById('userForm').addEventListener('submit', function (e) {

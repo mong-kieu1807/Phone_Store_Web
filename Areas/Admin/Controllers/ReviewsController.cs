@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿//NTBinh 19/01
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhoneStore.Data;
 using PhoneStore.Models;
@@ -68,3 +69,4 @@ namespace PhoneStore.Areas.Admin.Controllers
         }
     }
 }
+//NTBinh 19/01

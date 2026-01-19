@@ -17,7 +17,7 @@ public class ProductController : Controller
         _context = context;
     }
 
-    // --- ACTION INDEX (GIỮ NGUYÊN CODE CŨ CỦA BẠN) ---
+    // ACTION INDEX
     public async Task<IActionResult> Index(int page = 1, int pageSize = 6, int sort = 0, string? categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null)
     {
         //Chỉ lấy sản phẩm đang hoạt động
@@ -84,18 +84,18 @@ public class ProductController : Controller
             .ToListAsync();
 
         //Truyền dữ liệu ra View
-        ViewBag.CurrentPage = page;       // Trang hiện tại
-        ViewBag.TotalPages = totalPages; // Tổng trang
-        ViewBag.PageSize = pageSize;    // Số SP / trang
-        ViewBag.Sort = sort;        // Trạng thái sort
-        ViewBag.CategoryIds = categoryIds; // Danh sách category đã chọn
+        ViewBag.CurrentPage = page;       
+        ViewBag.TotalPages = totalPages; 
+        ViewBag.PageSize = pageSize;   
+        ViewBag.Sort = sort;        
+        ViewBag.CategoryIds = categoryIds; 
         ViewBag.MinPrice = minPrice ?? 0;
         ViewBag.MaxPrice = maxPrice ?? 50000000;
 
         return View(products);
     }
 
-    // --- ACTION DETAILS (ĐÃ UPDATE LẤY REVIEW) ---
+    // ACTION DETAILS NTBinh 19/01
     public async Task<IActionResult> Details(int id)
     {
         // 1. Lấy thông tin sản phẩm theo id
@@ -111,7 +111,7 @@ public class ProductController : Controller
         // 2. Lấy danh sách Review (Status = 1 là hiện)
         // Kết hợp bảng Users để lấy tên người bình luận
         var reviews = await _context.Reviews
-            .Where(r => r.product_id == id && r.status == 1) // status là byte
+            .Where(r => r.product_id == id && r.status == 1) 
             .OrderByDescending(r => r.created_at)
             .Join(_context.Users,
                   r => r.user_id,
@@ -139,7 +139,7 @@ public class ProductController : Controller
         return View(product);
     }
 
-    // --- ACTION ADD REVIEW (MỚI THÊM) ---
+    // ACTION ADD REVIEW NTBinh 19/01
     [HttpPost]
     public async Task<IActionResult> AddReview(int product_id, string comment, int rating)
     {

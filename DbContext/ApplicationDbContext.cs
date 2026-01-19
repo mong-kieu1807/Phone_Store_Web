@@ -12,7 +12,7 @@ namespace PhoneStore.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Bill> Bills { get; set; }
         public DbSet<BillDetail> BillDetails { get; set; }
-        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Review> Reviews { get; set; } //NTBinh 19/01
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<GoodsReceipts> GoodsReceipts { get; set; }
         public DbSet<Payment_Method> Payment_Methods { get; set; }

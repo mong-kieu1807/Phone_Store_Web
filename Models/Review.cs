@@ -15,7 +15,6 @@ namespace PhoneStore.Models
         public DateTime created_at { get; set; }
         public DateTime? updated_at { get; set; } // Để null được để tránh lỗi ngày tháng
 
-        // SỬA Ở ĐÂY: Dùng byte để khớp với TINYINT trong SQL
-        public byte status { get; set; }
+        public byte status { get; set; } //NTBinh 19/01
     }
 }

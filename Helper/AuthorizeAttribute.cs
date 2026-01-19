@@ -11,16 +11,13 @@ namespace PhoneStore.Helper
             var maNguoiDung = context.HttpContext.Session.GetInt32("UserId");
             var vaiTro = context.HttpContext.Session.GetString("UserRole");
 
-            // Kiểm tra nếu chưa đăng nhập hoặc không phải Admin
+            // Kiểm tra nếu chưa đăng nhập hoặc không phải Admin.NTBinh 19/01
             if (maNguoiDung == null ||
                 string.IsNullOrEmpty(vaiTro) ||
                 !vaiTro.Trim().Equals("Admin", StringComparison.OrdinalIgnoreCase))
             {
-                // Nếu không phải Admin -> Đá về Login
                 context.Result = new RedirectToActionResult("Login", "Auth", new { area = "" });
             }
-            // -------------------------------
-
             base.OnActionExecuting(context);
         }
     }

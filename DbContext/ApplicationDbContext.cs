@@ -1,4 +1,3 @@
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using PhoneStore.Models;
 
@@ -6,10 +5,7 @@ namespace PhoneStore.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -25,11 +21,7 @@ namespace PhoneStore.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Cấu hình composite key cho BillDetail
-            modelBuilder.Entity<BillDetail>()
-                .HasKey(bd => new { bd.order_id, bd.product_id });
+            modelBuilder.Entity<BillDetail>().HasKey(bd => new { bd.order_id, bd.product_id });
         }
-
     }
 }

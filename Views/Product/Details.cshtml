@@ -1,63 +1,49 @@
 @model PhoneStore.Models.Product
 
 @functions {
-    // chuyển chuỗi hình ảnh thành danh sách hình
+    // Hàm xử lý ảnh
     public List<string> GetImages(string imageString)
     {
-        if (string.IsNullOrEmpty(imageString))
-        {
-            return new List<string> { "default.png" };
-        }
-        return imageString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                          .Select(img => img.Trim())
-                          .ToList();
+        if (string.IsNullOrEmpty(imageString)) return new List<string> { "default.png" };
+        return imageString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(img => img.Trim()).ToList();
     }
 }
 
-@{
+@{ /* NTBinh 19/01 */
     ViewData["Title"] = Model.product_name;
     Layout = "~/Views/Shared/Layout/_Layout.cshtml";
-    
-    // Lấy danh sách hình ảnh
+
     var images = GetImages(Model.image);
-    
-    // Tính giá sau khi giảm
     var discountedPrice = Model.price * (100 - Model.discount_percent) / 100;
-    
-    // Lấy danh sách sản phẩm liên quan
     List<PhoneStore.Models.Product> relatedProducts = ViewBag.RelatedProducts ?? new List<PhoneStore.Models.Product>();
-}
-<!-- SECTION -->
+
+    // Lấy dữ liệu Review từ ViewBag
+    var listReviews = ViewBag.ListReviews as IEnumerable<PhoneStore.Models.ReviewViewModel>;
+    int totalReviews = ViewBag.TotalReviews ?? 0;
+    double avgRating = ViewBag.AverageRating ?? 0;
+} @* NTBinh 19/01 *@
+
 <div class="section">
     <div class="container">
         <div class="row">
-            <!-- Product main img -->
             <div class="col-md-5 col-md-push-2">
                 <div id="product-main-img">
                     @foreach (var img in images)
                     {
-                        <div class="product-preview">
-                            <img src="~/img/@img" alt="@Model.product_name">
-                        </div>
+                        <div class="product-preview"><img src="~/img/@img" alt="@Model.product_name"></div>
                     }
                 </div>
             </div>
-            <!-- /Product main img -->
 
-            <!-- Product thumb imgs -->
             <div class="col-md-2 col-md-pull-5">
                 <div id="product-imgs">
                     @foreach (var img in images)
                     {
-                        <div class="product-preview">
-                            <img src="~/img/@img" alt="@Model.product_name">
-                        </div>
+                        <div class="product-preview"><img src="~/img/@img" alt="@Model.product_name"></div>
                     }
                 </div>
             </div>
-            <!-- /Product thumb imgs -->
 
-            <!-- Product details -->
             <div class="col-md-5">
                 <div class="product-details">
                     <h2 class="product-name">@Model.product_name</h2>
@@ -65,17 +51,10 @@
                         <div class="product-rating">
                             @for (int i = 1; i <= 5; i++)
                             {
-                                if (i <= Model.rating)
-                                {
-                                    <i class="fa fa-star"></i>
-                                }
-                                else
-                                {
-                                    <i class="fa fa-star-o"></i>
-                                }
+                                    <i class="fa @(i <= avgRating ? "fa-star" : "fa-star-o")"></i>
                             }
                         </div>
-                        <a class="review-link" href="#">10 Review(s) | Add your review</a>
+                        <a class="review-link" href="#product-tab">@totalReviews Review(s) | Add your review</a>
                     </div>
                     <div>
                         <h3 class="product-price">
@@ -99,24 +78,13 @@
                     <p>@Model.description</p>
 
                     <div class="product-options">
-                        <label>
-                            Brand: <strong>@Model.brand</strong>
-                        </label>
+                        <label>Brand: <strong>@Model.brand</strong></label>
                     </div>
 
                     <div class="add-to-cart">
-                        <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@Model.product_id" method="get" onsubmit="return checkLoginBeforeAddToCart(event, @Model.product_id);">
-                            <div class="qty-label">
-                                Qty
-                                <div class="input-number">
-                                    <input type="number" value="1" min="1" max="@Model.stock_quantity">
-                                    <span class="qty-up">+</span>
-                                    <span class="qty-down">-</span>
-                                </div>
-                            </div>
-                            <button type="submit" class="add-to-cart-btn" @(Model.stock_quantity <= 0 ? "disabled" : "")>
-                                <i class="fa fa-shopping-cart"></i> add to cart
-                            </button>
+                        <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@Model.product_id" method="get">
+                            <div class="qty-label">Qty <div class="input-number"><input type="number" value="1" min="1" max="@Model.stock_quantity"><span class="qty-up">+</span><span class="qty-down">-</span></div></div>
+                            <button type="submit" class="add-to-cart-btn" @(Model.stock_quantity <= 0 ? "disabled" : "")><i class="fa fa-shopping-cart"></i> add to cart</button>
                         </form>
                     </div>
 
@@ -124,335 +92,149 @@
                         <li>Category:</li>
                         <li><a href="#">@Model.brand</a></li>
                     </ul>
-
-                    <ul class="product-links">
-                        <li>Share:</li>
-                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                        <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                        <li><a href="#"><i class="fa fa-envelope"></i></a></li>
-                    </ul>
-
-                </div>
+                    </div>
             </div>
-            <!-- /Product details -->
 
-            <!-- Product tab -->
             <div class="col-md-12">
                 <div id="product-tab">
-                    <!-- product tab nav -->
                     <ul class="tab-nav">
                         <li class="active"><a data-toggle="tab" href="#tab1">Description</a></li>
                         <li><a data-toggle="tab" href="#tab2">Details</a></li>
-                        <li><a data-toggle="tab" href="#tab3">Reviews (3)</a></li>
+                        <li><a data-toggle="tab" href="#tab3">Reviews (@totalReviews)</a></li> @* NTBinh 19/01 *@
                     </ul>
-                    <!-- /product tab nav -->
-
-                    <!-- product tab content -->
                     <div class="tab-content">
-                        <!-- tab1  -->
-                        <div id="tab1" class="tab-pane fade in active">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p>@Model.description</p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /tab1  -->
-
-                        <!-- tab2  -->
-                        <div id="tab2" class="tab-pane fade in">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h4>Product Specifications</h4>
-                                    <ul>
-                                        <li><strong>Brand:</strong> @Model.brand</li>
-                                        <li><strong>Product Name:</strong> @Model.product_name</li>
-                                        <li><strong>Price:</strong> @Model.price.ToString("N0") VND</li>
-                                        @if (Model.discount_percent > 0)
-                                        {
-                                            <li><strong>Discount:</strong> @Model.discount_percent%</li>
-                                            <li><strong>Discounted Price:</strong> @discountedPrice.ToString("N0") VND</li>
-                                        }
-                                        <li><strong>Available Quantity:</strong> @Model.stock_quantity</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /tab2  -->
-
-                        <!-- tab3  -->
+                        <div id="tab1" class="tab-pane fade in active"><div class="row"><div class="col-md-12"><p>@Model.description</p></div></div></div>
+                        <div id="tab2" class="tab-pane fade in"><div class="row"><div class="col-md-12"><h4>Specifications</h4><ul><li>Brand: @Model.brand</li></ul></div></div></div>
+                        @* NTBinh 19/01 *@
                         <div id="tab3" class="tab-pane fade in">
                             <div class="row">
-                                <!-- Rating -->
                                 <div class="col-md-3">
                                     <div id="rating">
                                         <div class="rating-avg">
-                                            <span>4.5</span>
+                                            <span>@avgRating.ToString("0.0")</span>
                                             <div class="rating-stars">
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star-o"></i>
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    <i class="fa @(i <= avgRating ? "fa-star" : "fa-star-o")"></i>
+                                                }
                                             </div>
                                         </div>
-                                        <ul class="rating">
-                                            <li>
-                                                <div class="rating-stars">
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                </div>
-                                                <div class="rating-progress">
-                                                    <div style="width: 80%;"></div>
-                                                </div>
-                                                <span class="sum">3</span>
-                                            </li>
-                                            <li>
-                                                <div class="rating-stars">
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                </div>
-                                                <div class="rating-progress">
-                                                    <div style="width: 60%;"></div>
-                                                </div>
-                                                <span class="sum">2</span>
-                                            </li>
-                                            <li>
-                                                <div class="rating-stars">
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                </div>
-                                                <div class="rating-progress">
-                                                    <div></div>
-                                                </div>
-                                                <span class="sum">0</span>
-                                            </li>
-                                            <li>
-                                                <div class="rating-stars">
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                </div>
-                                                <div class="rating-progress">
-                                                    <div></div>
-                                                </div>
-                                                <span class="sum">0</span>
-                                            </li>
-                                            <li>
-                                                <div class="rating-stars">
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                </div>
-                                                <div class="rating-progress">
-                                                    <div></div>
-                                                </div>
-                                                <span class="sum">0</span>
-                                            </li>
-                                        </ul>
                                     </div>
                                 </div>
-                                <!-- /Rating -->
 
-                                <!-- Reviews -->
                                 <div class="col-md-6">
                                     <div id="reviews">
                                         <ul class="reviews">
-                                            <li>
-                                                <div class="review-heading">
-                                                    <h5 class="name">John</h5>
-                                                    <p class="date">27 DEC 2018, 8:0 PM</p>
-                                                    <div class="review-rating">
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star-o empty"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="review-body">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-                                                        eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="review-heading">
-                                                    <h5 class="name">John</h5>
-                                                    <p class="date">27 DEC 2018, 8:0 PM</p>
-                                                    <div class="review-rating">
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star-o empty"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="review-body">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-                                                        eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="review-heading">
-                                                    <h5 class="name">John</h5>
-                                                    <p class="date">27 DEC 2018, 8:0 PM</p>
-                                                    <div class="review-rating">
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star-o empty"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="review-body">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-                                                        eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <ul class="reviews-pagination">
-                                            <li class="active">1</li>
-                                            <li><a href="#">2</a></li>
-                                            <li><a href="#">3</a></li>
-                                            <li><a href="#">4</a></li>
-                                            <li><a href="#"><i class="fa fa-angle-right"></i></a></li>
+                                            @if (listReviews != null && totalReviews > 0)
+                                            {
+                                                foreach (var item in listReviews)
+                                                {
+                                                            <li>
+                                                                <div class="review-heading">
+                                                                    <h5 class="name">@item.UserFullName</h5>
+                                                                    <p class="date">@item.Review.created_at.ToString("dd/MM/yyyy HH:mm")</p>
+                                                                    <div class="review-rating">
+                                                                @for (int k = 1; k <= 5; k++)
+                                                                {
+                                                                    <i class="fa @(k <= item.Review.rating ? "fa-star" : "fa-star-o empty")"></i>
+                                                                }
+                                                                    </div>
+                                                                </div>
+                                                                <div class="review-body"><p>@item.Review.comment</p></div>
+                                                            </li>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <li><p>Chưa có đánh giá nào.</p></li>
+                                            }
                                         </ul>
                                     </div>
                                 </div>
-                                <!-- /Reviews -->
 
-                                <!-- Review Form -->
                                 <div class="col-md-3">
                                     <div id="review-form">
-                                        <form class="review-form">
-                                            <input class="input" type="text" placeholder="Your Name">
-                                            <input class="input" type="email" placeholder="Your Email">
-                                            <textarea class="input" placeholder="Your Review"></textarea>
-                                            <div class="input-rating">
-                                                <span>Your Rating: </span>
-                                                <div class="stars">
-                                                    <input id="star5" name="rating" value="5" type="radio"><label
-                                                        for="star5"></label>
-                                                    <input id="star4" name="rating" value="4" type="radio"><label
-                                                        for="star4"></label>
-                                                    <input id="star3" name="rating" value="3" type="radio"><label
-                                                        for="star3"></label>
-                                                    <input id="star2" name="rating" value="2" type="radio"><label
-                                                        for="star2"></label>
-                                                    <input id="star1" name="rating" value="1" type="radio"><label
-                                                        for="star1"></label>
+                                        @if (Context.Session.GetInt32("UserId") != null)
+                                        {
+                                                <form class="review-form" asp-controller="Product" asp-action="AddReview" method="post">
+                                                    <input type="hidden" name="product_id" value="@Model.product_id" />
+                                                    <input class="input" type="text" placeholder="Your Name" value="@Context.Session.GetString("UserName")" readonly style="background-color:#eee">
+                                                    <textarea class="input" name="comment" placeholder="Nội dung đánh giá..." required></textarea>
+                                                    <div class="input-rating">
+                                                        <span>Chọn sao: </span>
+                                                        <div class="stars">
+                                                            <input id="star5" name="rating" value="5" type="radio"><label for="star5"></label>
+                                                            <input id="star4" name="rating" value="4" type="radio"><label for="star4"></label>
+                                                            <input id="star3" name="rating" value="3" type="radio"><label for="star3"></label>
+                                                            <input id="star2" name="rating" value="2" type="radio"><label for="star2"></label>
+                                                            <input id="star1" name="rating" value="1" type="radio"><label for="star1"></label>
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" class="primary-btn">Gửi đánh giá</button>
+                                                </form>
+                                        }
+                                        else
+                                        {
+                                                <div class="alert alert-warning">
+                                                    Vui lòng <a href="/Auth/Login" style="font-weight:bold">Đăng nhập</a> để đánh giá.
                                                 </div>
-                                            </div>
-                                            <button class="primary-btn">Submit</button>
-                                        </form>
+                                        }
                                     </div>
                                 </div>
-                                <!-- /Review Form -->
                             </div>
                         </div>
-                        <!-- /tab3  -->
+                        @* NTBinh 19/01 *@
                     </div>
-                    <!-- /product tab content  -->
                 </div>
             </div>
-            <!-- /product tab -->
-
         </div>
     </div>
 </div>
-<!-- /SECTION -->
 
-<!-- RELATED PRODUCTS -->
 <div class="section">
     <div class="container">
         <div class="row">
-
-            <div class="col-md-12">
-                <div class="section-title text-center">
-                    <h3 class="title">Related Products</h3>
-                </div>
-            </div>
-
+            <div class="col-md-12"><div class="section-title text-center"><h3 class="title">Related Products</h3></div></div>
             @if (relatedProducts != null && relatedProducts.Count > 0)
             {
                 @foreach (var product in relatedProducts)
                 {
-                    // Tính giá sau giảm cho sản phẩm liên quan
-                    var productPrice = product.price * (100 - product.discount_percent) / 100;
-                    
-                    // Lấy ảnh đầu tiên của sản phẩm
-                    var productImage = GetImages(product.image)[0];
-                    
-                    <!-- product -->
-                    <div class="col-md-3 col-xs-6">
-                        <div class="product">
-                            <div class="product-img">
-                                <img src="~/img/@productImage" alt="@product.product_name">
+                    var pPrice = product.price * (100 - product.discount_percent) / 100;
+                    var pImg = GetImages(product.image)[0];
+                            <div class="col-md-3 col-xs-6">
+                                <div class="product">
+                                    <div class="product-img">
+                                        <img src="~/img/@pImg" alt="@product.product_name">
                                 @if (product.discount_percent > 0)
                                 {
-                                    <div class="product-label">
-                                        <span class="sale">-@product.discount_percent%</span>
-                                    </div>
+                                    <div class="product-label"><span class="sale">-@product.discount_percent%</span></div>
                                 }
-                            </div>
-                            <div class="product-body">
-                                <p class="product-category">@product.brand</p>
-                                <h3 class="product-name">
-                                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.product_id">
-                                        @product.product_name
-                                    </a>
-                                </h3>
-                                <h4 class="product-price">
-                                    @productPrice.ToString("N0") VND
-                                    @if (product.discount_percent > 0)
+                                    </div>
+                                    <div class="product-body">
+                                        <p class="product-category">@product.brand</p>
+                                        <h3 class="product-name"><a asp-controller="Product" asp-action="Details" asp-route-id="@product.product_id">@product.product_name</a></h3>
+                                        <h4 class="product-price">@pPrice.ToString("N0") VND @if (product.discount_percent > 0)
                                     {
                                         <del class="product-old-price">@product.price.ToString("N0") VND</del>
-                                    }
-                                </h4>
-                                <div class="product-rating">
-                                    @for (int i = 1; i <= 5; i++)
+                                    }</h4>
+                                        <div class="product-rating">@for (int i = 1; i <= 5; i++)
                                     {
-                                        if (i <= product.rating)
-                                        {
-                                            <i class="fa fa-star"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="fa fa-star-o"></i>
-                                        }
-                                    }
+                                        <i class="fa @(i<=product.rating?"fa-star":"fa-star-o")"></i>
+                                    }</div>
+                                        <div class="add-to-cart">
+                                            <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@product.product_id" method="get">
+                                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="add-to-cart">
-                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /product -->
                 }
             }
             else
             {
-                <div class="col-md-12">
-                    <p class="text-center">No related products found.</p>
-                </div>
+                <div class="col-md-12"><p class="text-center">No related products found.</p></div>
             }
-
         </div>
     </div>
 </div>
-<!-- /RELATED PRODUCTS -->

@@ -17,12 +17,13 @@ public class ProductController : Controller
         _context = context;
     }
 
+    // --- ACTION INDEX (GIỮ NGUYÊN CODE CŨ CỦA BẠN) ---
     public async Task<IActionResult> Index(int page = 1, int pageSize = 6, int sort = 0, string? categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null)
     {
         //Chỉ lấy sản phẩm đang hoạt động
         var query = _context.Products.Where(p => p.status == 1);
 
-         // Lấy danh sách category để hiển thị sidebar
+        // Lấy danh sách category để hiển thị sidebar
         ViewBag.Categories = await _context.Categories
             .Where(c => c.status == 1)
             .ToListAsync();
@@ -47,7 +48,7 @@ public class ProductController : Controller
         if (minPrice.HasValue)
             query = query.Where(p => p.price >= minPrice.Value);
         if (maxPrice.HasValue)
-            query = query.Where(p => p.price <= maxPrice.Value);                                                
+            query = query.Where(p => p.price <= maxPrice.Value);
 
         //Sắp xếp theo giá
         switch (sort)
@@ -74,7 +75,7 @@ public class ProductController : Controller
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
-        
+
         // Top selling sidebar lấy 3 sản phẩm bán chạy nhất
         ViewBag.TopSellingProducts = await _context.Products
             .Where(p => p.status == 1)
@@ -83,10 +84,10 @@ public class ProductController : Controller
             .ToListAsync();
 
         //Truyền dữ liệu ra View
-        ViewBag.CurrentPage = page;      // Trang hiện tại
-        ViewBag.TotalPages  = totalPages; // Tổng trang
-        ViewBag.PageSize    = pageSize;   // Số SP / trang
-        ViewBag.Sort        = sort;       // Trạng thái sort
+        ViewBag.CurrentPage = page;       // Trang hiện tại
+        ViewBag.TotalPages = totalPages; // Tổng trang
+        ViewBag.PageSize = pageSize;    // Số SP / trang
+        ViewBag.Sort = sort;        // Trạng thái sort
         ViewBag.CategoryIds = categoryIds; // Danh sách category đã chọn
         ViewBag.MinPrice = minPrice ?? 0;
         ViewBag.MaxPrice = maxPrice ?? 50000000;
@@ -94,9 +95,10 @@ public class ProductController : Controller
         return View(products);
     }
 
+    // --- ACTION DETAILS (ĐÃ UPDATE LẤY REVIEW) ---
     public async Task<IActionResult> Details(int id)
     {
-        // Lấy thông tin sản phẩm theo id
+        // 1. Lấy thông tin sản phẩm theo id
         var product = await _context.Products
             .FirstOrDefaultAsync(p => p.product_id == id && p.status == 1);
 
@@ -106,7 +108,27 @@ public class ProductController : Controller
             return RedirectToAction("Index");
         }
 
-        // Lấy danh sách sản phẩm liên quan (cùng category, khác id)
+        // 2. Lấy danh sách Review (Status = 1 là hiện)
+        // Kết hợp bảng Users để lấy tên người bình luận
+        var reviews = await _context.Reviews
+            .Where(r => r.product_id == id && r.status == 1) // status là byte
+            .OrderByDescending(r => r.created_at)
+            .Join(_context.Users,
+                  r => r.user_id,
+                  u => u.user_id,
+                  (r, u) => new ReviewViewModel // Dùng ViewModel đã tạo ở bước trước
+                  {
+                      Review = r,
+                      UserFullName = u.full_name
+                  })
+            .ToListAsync();
+
+        // 3. Tính toán thống kê review
+        ViewBag.ListReviews = reviews;
+        ViewBag.TotalReviews = reviews.Count;
+        ViewBag.AverageRating = reviews.Any() ? reviews.Average(x => x.Review.rating) : 0;
+
+        // 4. Lấy danh sách sản phẩm liên quan
         var relatedProducts = await _context.Products
             .Where(p => p.category_id == product.category_id && p.product_id != id && p.status == 1)
             .Take(4)
@@ -116,6 +138,38 @@ public class ProductController : Controller
 
         return View(product);
     }
+
+    // --- ACTION ADD REVIEW (MỚI THÊM) ---
+    [HttpPost]
+    public async Task<IActionResult> AddReview(int product_id, string comment, int rating)
+    {
+        // Kiểm tra đăng nhập qua Session
+        var userId = HttpContext.Session.GetInt32("UserId");
+        if (userId == null)
+        {
+            // Nếu chưa đăng nhập, chuyển hướng sang trang Login
+            return RedirectToAction("Login", "Auth");
+        }
+
+        // Tạo đối tượng Review mới
+        var review = new Review
+        {
+            product_id = product_id,
+            user_id = userId.Value,
+            rating = rating,
+            comment = comment ?? "", // Tránh null
+            created_at = DateTime.Now,
+            status = 1 // 1 (byte) = Hiện, 0 = Ẩn
+        };
+
+        // Lưu vào database
+        _context.Reviews.Add(review);
+        await _context.SaveChangesAsync();
+
+        // Load lại trang chi tiết sản phẩm
+        return RedirectToAction("Details", new { id = product_id });
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

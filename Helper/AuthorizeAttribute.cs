@@ -12,18 +12,21 @@ namespace PhoneStore.Helper
             var vaiTro = context.HttpContext.Session.GetString("UserRole");
 
             // Kiểm tra nếu chưa đăng nhập hoặc không phải Admin
-            if (maNguoiDung == null || vaiTro != "Admin")
+            if (maNguoiDung == null ||
+                string.IsNullOrEmpty(vaiTro) ||
+                !vaiTro.Trim().Equals("Admin", StringComparison.OrdinalIgnoreCase))
             {
-                // Quay về trang login
-                context.Result = new RedirectToActionResult("Login", "Auth", new { area = "Admin" });
+                // Nếu không phải Admin -> Đá về Login
+                context.Result = new RedirectToActionResult("Login", "Auth", new { area = "" });
             }
+            // -------------------------------
 
             base.OnActionExecuting(context);
         }
     }
 
     /// Attribute để bảo vệ các action yêu cầu đăng nhập cho cả 2
-  
+
     public class AuthorizeAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)

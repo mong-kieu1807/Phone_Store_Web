@@ -1,18 +1,21 @@
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PhoneStore.Models
 {
-	public class Review
-	{
-		[Key]
-		public int review_id { get; set; }                         
-		public int product_id { get; set; }                         
-		public int user_id { get; set; }   
-		public int rating { get; set; }                         
-		public string comment { get; set; } = " ";
-		public DateTime created_at { get; set; }                    
-		public DateTime updated_at { get; set; }                    
-		public bool status { get; set; }
+    [Table("Reviews")]
+    public class Review
+    {
+        [Key]
+        public int review_id { get; set; }
+        public int product_id { get; set; }
+        public int user_id { get; set; }
+        public int rating { get; set; }
+        public string comment { get; set; }
+        public DateTime created_at { get; set; }
+        public DateTime? updated_at { get; set; } // Để null được để tránh lỗi ngày tháng
+
+        // SỬA Ở ĐÂY: Dùng byte để khớp với TINYINT trong SQL
+        public byte status { get; set; }
     }
 }

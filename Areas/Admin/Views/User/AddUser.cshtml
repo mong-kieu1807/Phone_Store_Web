@@ -1,0 +1,237 @@
+@model PhoneStore.Models.User
+@{
+	ViewData["Title"] = "Thêm người dùng mới";
+}
+
+<div id="page-wrapper">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">
+					<i class="fa fa-user-plus"></i> @ViewData["Title"]
+				</h1>
+			</div>
+		</div>
+
+		@if (TempData["SuccessMessage"] != null)
+		{
+			<div class="alert alert-success">
+				@TempData["SuccessMessage"]
+			</div>
+		}
+		@if (TempData["ErrorMessage"] != null)
+		{
+			<div class="alert alert-danger">
+				@TempData["ErrorMessage"]
+			</div>
+		}
+
+		<form asp-action="AddUser" asp-controller="User" asp-area="Admin" method="post">
+			<div class="row">
+				<div class="col-lg-8 col-lg-offset-2">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<i class="fa fa-info-circle"></i> Thông tin người dùng
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label><i class="fa fa-user"></i> Tên đăng nhập <span class="text-danger">*</span></label>
+										<input asp-for="username" class="form-control" placeholder="Nhập tên đăng nhập..." required />
+										<span asp-validation-for="username" class="text-danger"></span>
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label><i class="fa fa-lock"></i> Mật khẩu <span class="text-danger">*</span></label>
+										<input asp-for="password" type="password" class="form-control" placeholder="Nhập mật khẩu..." required />
+										<span asp-validation-for="password" class="text-danger"></span>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label><i class="fa fa-id-card"></i> Họ và tên <span class="text-danger">*</span></label>
+								<input asp-for="full_name" class="form-control" placeholder="Nhập họ và tên..." required />
+								<span asp-validation-for="full_name" class="text-danger"></span>
+							</div>
+
+							<div class="row">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label><i class="fa fa-envelope"></i> Email <span class="text-danger">*</span></label>
+										<input asp-for="email" type="email" class="form-control" placeholder="example@email.com" required />
+										<span asp-validation-for="email" class="text-danger"></span>
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label><i class="fa fa-phone"></i> Số điện thoại</label>
+										<input asp-for="phone" class="form-control" placeholder="Nhập số điện thoại..." />
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label><i class="fa fa-map-marker"></i> Địa chỉ</label>
+								<textarea asp-for="address" class="form-control" rows="3" placeholder="Nhập địa chỉ..."></textarea>
+							</div>
+
+							<div class="row">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label><i class="fa fa-user-tag"></i> Vai trò <span class="text-danger">*</span></label>
+										<select asp-for="role" class="form-control" required>
+											<option value="">-- Chọn vai trò --</option>
+											<option value="User">Người dùng</option>
+											<option value="Admin">Quản trị viên</option>
+										</select>
+										<span asp-validation-for="role" class="text-danger"></span>
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label><i class="fa fa-toggle-on"></i> Trạng thái</label>
+										<select asp-for="status" class="form-control">
+											<option value="1" selected>Hoạt động</option>
+											<option value="0">Khóa</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<button type="submit" class="btn btn-success btn-lg">
+								<i class="fa fa-save"></i> Lưu người dùng
+							</button>
+							<a asp-area="Admin" asp-controller="User" asp-action="Index" class="btn btn-default btn-lg">
+								<i class="fa fa-arrow-left"></i> Quay lại
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<style>
+	#page-wrapper {
+		margin-left: 220px;
+		padding: 20px;
+		min-height: 100vh;
+		background: #f8f9fa;
+	}
+
+	.col-lg-offset-2 {
+		margin-left: 16.66666667%;
+	}
+
+	.panel {
+		background: white;
+		border-radius: 8px;
+		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		margin-bottom: 20px;
+	}
+
+	.panel-heading {
+		background: #f5f5f5;
+		padding: 15px;
+		border-bottom: 1px solid #ddd;
+		font-weight: 600;
+		border-radius: 8px 8px 0 0;
+	}
+
+	.panel-body {
+		padding: 20px;
+	}
+
+	.form-group {
+		margin-bottom: 15px;
+	}
+
+	.form-group label {
+		font-weight: 600;
+		margin-bottom: 5px;
+		display: block;
+	}
+
+	.form-control {
+		width: 100%;
+		padding: 8px 12px;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+	}
+
+	.form-control:focus {
+		border-color: #337ab7;
+		outline: none;
+		box-shadow: 0 0 0 0.2rem rgba(51, 122, 183, 0.25);
+	}
+
+	.btn {
+		padding: 10px 20px;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-weight: 600;
+		transition: all 0.3s;
+		margin-right: 10px;
+	}
+
+	.btn-success {
+		background: #28a745;
+		color: white;
+	}
+
+	.btn-success:hover {
+		background: #218838;
+	}
+
+	.btn-default {
+		background: #6c757d;
+		color: white;
+		text-decoration: none;
+		display: inline-block;
+	}
+
+	.btn-default:hover {
+		background: #5a6268;
+		color: white;
+	}
+
+	.btn-lg {
+		padding: 12px 24px;
+		font-size: 16px;
+	}
+
+	.alert {
+		padding: 15px;
+		border-radius: 4px;
+		margin-bottom: 20px;
+	}
+
+	.alert-success {
+		background: #d4edda;
+		border: 1px solid #c3e6cb;
+		color: #155724;
+	}
+
+	.alert-danger {
+		background: #f8d7da;
+		border: 1px solid #f5c6cb;
+		color: #721c24;
+	}
+
+	.text-danger {
+		color: #dc3545;
+	}
+</style>
+
+@section Scripts {
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

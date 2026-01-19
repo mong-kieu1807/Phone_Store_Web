@@ -15,27 +15,106 @@ namespace PhoneStore.Areas.Admin.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+
+         public async Task<IActionResult> Index(string? search, string? sort) 
         {
-            // Dữ liệu tĩnh mẫu
-            var suppliers = new List<Supplier>
+            var query = _context.Suppliers
+                .Where(s => s.status == 1); // chỉ lấy NCC đang hoạt động
+
+            // Tìm kiếm theo từ khóa
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                new Supplier { supplier_id = 1, supplier_name = "Công ty TNHH Apple Việt Nam", address = "123 Lê Duẩn, Q1, TP.HCM", phone = "0281234567", email = "apple@vietnam.vn", status = 1 },
-                new Supplier { supplier_id = 2, supplier_name = "Samsung Việt Nam", address = "456 Nguyễn Huệ, Q1, TP.HCM", phone = "0282345678", email = "samsung@vn.com", status = 1 },
-                new Supplier { supplier_id = 3, supplier_name = "Xiaomi Store Vietnam", address = "789 Hai Bà Trưng, Q3, TP.HCM", phone = "0283456789", email = "xiaomi@vn.com", status = 1 },
-                new Supplier { supplier_id = 4, supplier_name = "Oppo Mobile VN", address = "321 Điện Biên Phủ, Q10, TP.HCM", phone = "0284567890", email = "oppo@vietnam.vn", status = 1 },
-                new Supplier { supplier_id = 5, supplier_name = "Vivo Vietnam Co., Ltd", address = "654 Lý Thường Kiệt, Q5, TP.HCM", phone = "0285678901", email = "vivo@vn.com", status = 1 }
-            };
-            
+                query = query.Where(s => s.supplier_name.Contains(search));
+            }
+
+            //Sắp xếp
+            query = sort == "asc"
+                ? query.OrderBy(s => s.supplier_name)
+                : query.OrderByDescending(s => s.supplier_id);
+
+            var suppliers = await query.ToListAsync();
+
+            //Giữ lại trạng thái
+            ViewBag.Search = search;
+            ViewBag.Sort   = sort ?? "desc";
+
             return View(suppliers);
         }
 
-        // Xóa nhà cung cấp (Chức năng tạm thời - Dữ liệu tĩnh)
-        [HttpPost]
-        public IActionResult Delete(int id)
+        //Hiển thị form tạo nhà cung cấp
+        [HttpGet]
+        public IActionResult Create()
         {
-            // Không thực hiện xóa thật sự - chỉ trả về thông báo
-            return Json(new { success = true, message = "Chức năng đang phát triển - Dữ liệu tĩnh" });
+            return View();
+        }
+        //Xử lý tạo nhà cung cấp
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Supplier model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Dữ liệu không hợp lệ";
+                return View(model);
+            }
+
+            model.status = 1;
+            _context.Suppliers.Add(model);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Thêm nhà cung cấp thành công!";
+            return RedirectToAction("Index");
+        }
+
+        // Hiển thị form chỉnh sửa nhà cung cấp
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var supplier = await _context.Suppliers.FindAsync(id);
+            if (supplier == null) return NotFound();
+
+            return View(supplier);
+        }
+        // Xử lý chỉnh sửa nhà cung cấp
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Supplier model)
+        {
+            var supplier = await _context.Suppliers.FindAsync(id);
+            if (supplier == null) return NotFound();
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            supplier.supplier_name = model.supplier_name;
+            supplier.phone         = model.phone;
+            supplier.email         = model.email;
+            supplier.address       = model.address;
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Cập nhật nhà cung cấp thành công!";
+            return RedirectToAction("Index");
+        }
+
+        // Xử lý xóa nhà cung cấp (xóa mềm)
+       [HttpPost]
+       [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var supplier = await _context.Suppliers.FindAsync(id);
+
+            if (supplier == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy nhà cung cấp" });
+            }
+
+            supplier.status = 0; //xóa mềm
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Đã xóa nhà cung cấp" });
         }
     }
 }

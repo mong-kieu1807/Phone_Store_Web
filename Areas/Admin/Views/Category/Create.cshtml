@@ -12,20 +12,6 @@
 				</h1>
 			</div>
 		</div>
-
-		@if (TempData["SuccessMessage"] != null)
-		{
-			<div class="alert alert-success">
-				<i class="fa fa-check-circle"></i> @TempData["SuccessMessage"]
-			</div>
-		}
-		@if (TempData["ErrorMessage"] != null)
-		{
-			<div class="alert alert-danger">
-				<i class="fa fa-exclamation-circle"></i> @TempData["ErrorMessage"]
-			</div>
-		}
-
 		<form asp-action="Create" asp-controller="Category" asp-area="Admin" method="post">
 			<div class="row">
 				<div class="col-lg-8">

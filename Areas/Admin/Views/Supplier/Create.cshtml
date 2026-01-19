@@ -1,6 +1,6 @@
-@model PhoneStore.Models.Category
+@model PhoneStore.Models.Supplier
 @{
-	ViewData["Title"] = "Chỉnh sửa danh mục";
+	ViewData["Title"] = "Thêm nhà cung cấp mới";
 }
 
 <div id="page-wrapper">
@@ -8,32 +8,49 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<h1 class="page-header">
-					<i class="fa fa-edit"></i> @ViewData["Title"]
+					<i class="fa fa-plus-circle"></i> @ViewData["Title"]
 				</h1>
 			</div>
 		</div>
-		<form asp-action="Edit" asp-controller="Category" asp-area="Admin" method="post">
-			<input type="hidden" asp-for="category_id" />
-            <input type="hidden" asp-for="status" />
+		<form asp-action="Create" asp-controller="Supplier" asp-area="Admin" method="post">
 			<div class="row">
 				<div class="col-lg-8">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<i class="fa fa-info-circle"></i> Thông tin danh mục
+							<i class="fa fa-info-circle"></i> Thông tin nhà cung cấp
 						</div>
 						<div class="panel-body">
 							<div class="form-group">
-								<label><i class="fa fa-tag"></i> Tên danh mục <span class="text-danger">*</span></label>
-								<input asp-for="category_name" class="form-control" placeholder="Nhập tên danh mục..." required />
-								<span asp-validation-for="category_name" class="text-danger"></span>
-								<small class="help-block"><i class="fa fa-lightbulb-o"></i> VD: Điện thoại, Phụ kiện, Sạc...</small>
+								<label><i class="fa fa-building"></i> Tên nhà cung cấp <span class="text-danger">*</span></label>
+								<input asp-for="supplier_name" class="form-control" placeholder="Nhập tên nhà cung cấp..." required />
+								<span asp-validation-for="supplier_name" class="text-danger"></span>
+								<small class="help-block"><i class="fa fa-lightbulb-o"></i> VD: Apple Vietnam, Samsung Electronics...</small>
+							</div>
+
+							<div class="row">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label><i class="fa fa-phone"></i> Số điện thoại <span class="text-danger">*</span></label>
+										<input asp-for="phone" class="form-control" placeholder="Nhập số điện thoại..." type="tel" required />
+										<span asp-validation-for="phone" class="text-danger"></span>
+										<small class="help-block"><i class="fa fa-info-circle"></i> VD: 0901234567 hoặc +84 901 234 567</small>
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label><i class="fa fa-envelope"></i> Email <span class="text-danger">*</span></label>
+										<input asp-for="email" class="form-control" placeholder="Nhập email..." type="email" required />
+										<span asp-validation-for="email" class="text-danger"></span>
+										<small class="help-block"><i class="fa fa-info-circle"></i> VD: contact@supplier.com</small>
+									</div>
+								</div>
 							</div>
 
 							<div class="form-group">
-								<label><i class="fa fa-align-left"></i> Mô tả danh mục</label>
-								<textarea asp-for="description" class="form-control" rows="6" placeholder="Nhập mô tả chi tiết về danh mục..."></textarea>
-								<span asp-validation-for="description" class="text-danger"></span>
-								<small class="help-block"><i class="fa fa-info-circle"></i> Mô tả giúp khách hàng hiểu rõ hơn về danh mục này</small>
+								<label><i class="fa fa-map-marker"></i> Địa chỉ <span class="text-danger">*</span></label>
+								<textarea asp-for="address" class="form-control" rows="3" placeholder="Nhập địa chỉ đầy đủ..." required></textarea>
+								<span asp-validation-for="address" class="text-danger"></span>
+								<small class="help-block"><i class="fa fa-info-circle"></i> VD: 123 Đường Lê Lợi, Quận 1, TP. HCM</small>
 							</div>
 						</div>
 					</div>
@@ -45,47 +62,35 @@
 							<i class="fa fa-cogs"></i> Hành động
 						</div>
 						<div class="panel-body">
-							<button type="submit" class="btn btn-success btn-block btn-lg" onclick="return confirm('Bạn có chắc chắn muốn cập nhật danh mục này không?');">
-								<i class="fa fa-save"></i> Lưu thay đổi
+							<button type="submit" class="btn btn-success btn-block btn-lg" onclick="return confirm('Bạn có chắc chắn muốn thêm nhà cung cấp này không?');">
+								<i class="fa fa-save"></i> Lưu nhà cung cấp
 							</button>
-							<a asp-area="Admin" asp-controller="Category" asp-action="Index" class="btn btn-default btn-block btn-md">
+							<a asp-area="Admin" asp-controller="Supplier" asp-action="Index" class="btn btn-default btn-block btn-md">
 								<i class="fa fa-arrow-left"></i> Quay lại
 							</a>
 						</div>
 					</div>
 
-					<div class="panel panel-warning">
-						<div class="panel-heading">
-							<i class="fa fa-clock-o"></i> Thông tin khác
-						</div>
-						<div class="panel-body" style="font-size: 13px;">
-							<p>
-								<strong>ID:</strong> @Model.category_id
-							</p>
-							@if (Model.created_at.HasValue)
-							{
-								<p>
-									<strong>Tạo lúc:</strong> @Model.created_at?.ToString("dd/MM/yyyy HH:mm")
-								</p>
-							}
-							@if (Model.updated_at.HasValue)
-							{
-								<p>
-									<strong>Cập nhật lúc:</strong> @Model.updated_at?.ToString("dd/MM/yyyy HH:mm")
-								</p>
-							}
-						</div>
-					</div>
-
 					<div class="panel panel-info">
 						<div class="panel-heading">
-							<i class="fa fa-lightbulb-o"></i> Mẹo
+							<i class="fa fa-lightbulb-o"></i> Hướng dẫn
 						</div>
 						<div class="panel-body" style="font-size: 13px;">
 							<ul style="padding-left: 20px; margin: 0;">
-								<li>Kiểm tra kỹ tên danh mục</li>
-								<li>Lưu thường xuyên để không mất dữ liệu</li>
+								<li>Tất cả trường với <span class="text-danger">*</span> là bắt buộc</li>
+								<li>Nhập số điện thoại đúng định dạng</li>
+								<li>Email phải hợp lệ</li>
+								<li>Địa chỉ nên chi tiết để tiện liên hệ</li>
 							</ul>
+						</div>
+					</div>
+
+					<div class="panel panel-warning">
+						<div class="panel-heading">
+							<i class="fa fa-exclamation-triangle"></i> Lưu ý
+						</div>
+						<div class="panel-body" style="font-size: 13px; color: #856404;">
+							<i class="fa fa-check"></i> Kiểm tra thông tin kỹ càng trước khi lưu
 						</div>
 					</div>
 				</div>
@@ -173,34 +178,17 @@
 		background: #f0f8ff;
 	}
 
+	.panel-info .panel-body li {
+		color: #004085;
+		margin-bottom: 8px;
+	}
+
 	.panel-warning .panel-body {
 		background: #fffaed;
 	}
 
 	.panel-body {
 		padding: 20px;
-	}
-
-	.panel-body p {
-		margin-bottom: 10px;
-		color: #2c3e50;
-	}
-
-	.panel-body ul {
-		margin: 0;
-		padding-left: 20px;
-	}
-
-	.panel-body li {
-		margin-bottom: 8px;
-	}
-
-	.panel-info .panel-body li {
-		color: #004085;
-	}
-
-	.panel-warning .panel-body li {
-		color: #856404;
 	}
 
 	.form-group {
@@ -238,7 +226,7 @@
 
 	textarea.form-control {
 		resize: vertical;
-		min-height: 100px;
+		min-height: 70px;
 	}
 
 	.text-danger {
@@ -356,6 +344,10 @@
 		.col-lg-4 {
 			width: 100%;
 			margin-bottom: 15px;
+		}
+
+		.col-lg-6 {
+			width: 100%;
 		}
 	}
 </style>

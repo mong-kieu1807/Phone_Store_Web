@@ -21,6 +21,7 @@ namespace PhoneStore.Data
         public DbSet<GoodsReceipts> GoodsReceipts { get; set; }
         public DbSet<Payment_Method> Payment_Methods { get; set; }
         public DbSet<Websetting> Websettings { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

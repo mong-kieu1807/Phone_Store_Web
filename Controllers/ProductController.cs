@@ -17,17 +17,11 @@ public class ProductController : Controller
         _context = context;
     }
 
-<<<<<<< HEAD
     public async Task<IActionResult> Index(int page = 1, int pageSize = 6, int sort = 0, string? categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null, string? keyword = null    )
-=======
-    // ACTION INDEX
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 6, int sort = 0, string? categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null)
->>>>>>> origin/Binh
     {
         //Chỉ lấy sản phẩm đang hoạt động
         var query = _context.Products.Where(p => p.status == 1);
 
-<<<<<<< HEAD
          // Tìm kiếm theo từ khóa
         if (!string.IsNullOrWhiteSpace(keyword))
         {
@@ -39,9 +33,6 @@ public class ProductController : Controller
         }
 
          // Lấy danh sách category để hiển thị sidebar
-=======
-        // Lấy danh sách category để hiển thị sidebar
->>>>>>> origin/Binh
         ViewBag.Categories = await _context.Categories
             .Where(c => c.status == 1)
             .ToListAsync();

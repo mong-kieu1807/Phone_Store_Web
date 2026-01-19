@@ -29,12 +29,12 @@ public class ContactController : Controller
         if (ModelState.IsValid)
         {
             contact.created_at = DateTime.Now;
-            contact.status = 0; // Chưa xử lý
+            contact.status = "Chưa xử lý";
             
             _context.Contacts.Add(contact);
             await _context.SaveChangesAsync();
             
-            _logger.LogInformation($"Contact form submitted by {contact.name} ({contact.email})");
+            _logger.LogInformation($"Contact form submitted by {contact.full_name} ({contact.email})");
             
             TempData["SuccessMessage"] = "Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.";
             return RedirectToAction(nameof(Index));

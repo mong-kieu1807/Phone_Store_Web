@@ -23,6 +23,7 @@ namespace PhoneStore.Models
 		public int stock_quantity { get; set; }                  // Số lượng tồn kho
 		public int sold_count { get; set; }                  // Số lượng đã bán
 		public decimal rating { get; set; }
+		public int view_count { get; set; }
 		public string image { get; set; } = string.Empty;           // Ảnh
 		
 		public string description { get; set; } = string.Empty;     // Mô tả

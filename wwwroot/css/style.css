@@ -453,8 +453,15 @@ textarea.input {
   float: left;
 }
 
+.header-logo .logo {
+  display: inline-block;
+  padding: 10px 0;
+}
+
 .header-logo .logo img {
   display: block;
+  width: 180px;
+  height: 50px;
 }
 
 /*----------------------------*\
@@ -2340,6 +2347,49 @@ textarea.input {
 
 .footer-links li a:hover {
   color: #D10024;
+}
+
+.footer-links .supplier-logo {
+  max-width: 80px;
+  height: auto;
+}
+
+.footer-links.supplier-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.footer-links.supplier-list li {
+  margin: 0;
+}
+
+/* Contact Information Styles */
+.contact-info-row {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.contact-info-label {
+  min-width: 120px;
+}
+
+.contact-info-value {
+  flex: 1;
+  text-align: right;
+}
+
+.contact-info-row.working-hours-block {
+  display: block;
+}
+
+.working-hours-header {
+  margin-bottom: 10px;
+}
+
+.working-hours-item {
+  padding-left: 0;
+  margin-bottom: 5px;
 }
 
 .copyright {

@@ -44,11 +44,19 @@
 					<i class="fa fa-dashboard"></i> Tổng quan
 				</a>
 			</li>
-			<li>
+			<li> 
 				<a asp-area="Admin" asp-controller="Product" asp-action="Index">
-					<i class="fa fa-mobile"></i> Quản lý sản phẩm
+					<i class="fa fa-mobile"></i> Sản phẩm
 				</a>
 			</li>
+			@* NTBinh 19/01 *@
+			<li>
+				<a asp-area="Admin" asp-controller="Reviews" asp-action="Index">
+					<i class="fa fa-comments"></i> Quản lý Đánh giá
+				</a>
+			</li>
+			@* NTBinh 19/01 *@
+
 			<li>
 				<a asp-area="Admin" asp-controller="Category" asp-action="Index">
 					<i class="fa fa-folder"></i> Danh mục
@@ -72,6 +80,11 @@
 			<li>
 				<a asp-area="Admin" asp-controller="GoodsReceipts" asp-action="Index">
 					<i class="fa fa-file-text"></i> Phiếu nhập hàng
+				</a>
+			</li>
+			<li>
+				<a asp-area="Admin" asp-controller="Contact" asp-action="Index">
+					<i class="fa fa-file-text"></i> Liên hệ
 				</a>
 			</li>
 			<li>

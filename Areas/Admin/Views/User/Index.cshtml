@@ -80,7 +80,7 @@
                                         <td>@(user.created_at?.ToString("dd/MM/yyyy") ?? "N/A")</td>
                                         <td>
                                             <div class="action-buttons">
-                                                <a asp-area="Admin" asp-controller="User" asp-action="Edit" asp-route-id="@user.user_id" class="btn btn-primary btn-sm">
+                                                <a asp-area="Admin" asp-controller="User" asp-action="EditUser" asp-route-id="@user.user_id" class="btn btn-primary btn-sm">
                                                     <i class="fa fa-edit"></i> Cập nhật
                                                 </a>
                                                 <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser(@user.user_id)">
@@ -98,7 +98,7 @@
         </div>
     </div>
 
-    <a class="floating-add-button" asp-area="Admin" asp-controller="User" asp-action="Create">
+    <a class="floating-add-button" asp-area="Admin" asp-controller="User" asp-action="AddUser">
         <i class="fa fa-plus"></i> Thêm người dùng
     </a>
 </div>

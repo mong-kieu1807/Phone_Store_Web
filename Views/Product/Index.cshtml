@@ -248,6 +248,20 @@
                                             <span class="sale">-@item.discount_percent%</span>
                                         </div>
                                     }
+                                   
+                                    @if (item.stock_quantity <= 0)
+                                    {
+                                        <div class="product-label">
+                                            <span class="new" style="background-color: #f44336;">HẾT HÀNG</span>
+                                        </div>
+                                    }
+                                    else if (item.stock_quantity < 10)
+                                    {
+                                        <div class="product-label" style="top: 0; right: 0; left: auto;">
+                                            <span class="new" style="background-color: #FF9800;">Còn @item.stock_quantity</span>
+                                        </div>
+                                    }
+                                  
                                 </div>
                                 <div class="product-body">
                                     <p class="product-category">@item.brand</p>
@@ -263,10 +277,62 @@
                                             <del class="product-old-price">@item.price.ToString("N0") VND</del>
                                         }
                                     </h4>
+                                    <div class="product-rating">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= item.rating)
+                                            {
+                                                <i class="fa fa-star"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-star-o"></i>
+                                            }
+                                        }
+                                    </div>
+                                    
+                                    @* Hiển thị trạng thái kho hàng *@
+                                    @{
+                                        var stockColor = item.stock_quantity == 0 ? "#f44336" : 
+                                                       item.stock_quantity < 10 ? "#FF9800" : "#4CAF50";
+                                        var stockIcon = item.stock_quantity == 0 ? "fa-times-circle" : 
+                                                      item.stock_quantity < 10 ? "fa-exclamation-triangle" : "fa-check-circle";
+                                    }
+                                    
+                                    <div style="margin-top: 8px;">
+                                        <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
+                                            <i class="fa @stockIcon" style="color: @stockColor; font-size: 12px;"></i>
+                                            <small style="color: @stockColor; font-weight: 600; font-size: 12px;">
+                                                @if (item.stock_quantity == 0)
+                                                {
+                                                    <text>Hết hàng</text>
+                                                }
+                                                else if (item.stock_quantity < 5)
+                                                {
+                                                    <text>Chỉ còn @item.stock_quantity!</text>
+                                                }
+                                                else if (item.stock_quantity < 10)
+                                                {
+                                                    <text>Còn @item.stock_quantity sản phẩm</text>
+                                                }
+                                                else
+                                                {
+                                                    <text>Còn hàng (@item.stock_quantity)</text>
+                                                }
+                                            </small>
+                                        </div>
+                                        
+                                        @* Thanh tiến trình mini *@
+                                        <div style="width: 100%; background-color: #f0f0f0; border-radius: 3px; height: 4px; overflow: hidden;">
+                                            <div style="width: @Math.Min((item.stock_quantity * 100.0 / 50), 100)%; background-color: @stockColor; height: 100%; transition: width 0.3s ease;"></div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="add-to-cart">
                                     <form asp-controller="Order" asp-action="AddToCart" asp-route-id="@item.product_id" method="get" style="display:block;">
-                                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                                        <button class="add-to-cart-btn" @(item.stock_quantity <= 0 ? "disabled" : "") style="@(item.stock_quantity <= 0 ? "background-color: #ccc; cursor: not-allowed;" : "")">
+                                            <i class="fa fa-shopping-cart"></i> @(item.stock_quantity <= 0 ? "hết hàng" : "thêm vào giỏ")
+                                        </button>
                                     </form>
                                 </div>
                             </div>
@@ -388,6 +454,7 @@
         .replace(/\D/g, '')                // bỏ ký tự không phải số
         .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // thêm dấu .
     }
+
     document.getElementById('price-min').addEventListener('input', function () {
         formatPriceInput(this);
     });

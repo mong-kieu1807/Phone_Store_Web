@@ -32,15 +32,15 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// ✅ DÙNG CÁI NÀY THAY CHO MapStaticAssets
+//  DÙNG CÁI NÀY THAY CHO MapStaticAssets
 app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
-
-// Kich hoat Session
+// Kich hoat Session (PHẢI TRƯỚC UseAuthorization)
 app.UseSession();
+
+app.UseAuthorization();
 // Areas routing
 app.MapControllerRoute(
     name: "areas",

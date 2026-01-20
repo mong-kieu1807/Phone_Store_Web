@@ -7,9 +7,8 @@ namespace PhoneStore.Areas.Admin.Controllers
 	[Area("Admin")]
 	public class AuthController : Controller
 	{
-		/// <summary>
+	
 		/// Redirect trang Login của Admin về AuthController chung
-		/// </summary>
 		[HttpGet]
 		public IActionResult Login()
 		{

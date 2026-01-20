@@ -43,6 +43,19 @@
 				@if (ViewData["HideSearchAndNav"] == null || !(bool)ViewData["HideSearchAndNav"]) //PNSon 18/01/2026 Ẩn Cart khi ở trang Thông tin cá nhân
 				{
 					<div class="header-ctn">
+						<!-- Wishlist (Yêu thích) -->
+						@if (!string.IsNullOrEmpty(Context.Session.GetString("UserId")))
+						{
+							<div>
+								<a href="@Url.Action("Index", "Favorite")" title="Sản phẩm yêu thích">
+									<i class="fa fa-heart-o"></i>
+									<span>Yêu thích</span>
+									<div class="qty" id="favoriteCountBadge">0</div>
+								</a>
+							</div>
+						}
+						<!-- /Wishlist -->
+
 						<!-- Cart --> 
 						<!--NTBinh 14/01/2026-->
 						<div class="dropdown">

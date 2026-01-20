@@ -112,5 +112,74 @@ namespace PhoneStore.Controllers
             return View(user);
         }
         
+        // Xem danh sách đơn hàng của người dùng
+        public IActionResult Bills(string shippingStatus)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "Auth");
+
+            var query = _context.Bills
+              .Where(b => b.user_id == userId && b.status == 1);
+
+            if (!string.IsNullOrEmpty(shippingStatus))
+            {
+                query = query.Where(b =>b.shipping_status != null &&b.shipping_status == shippingStatus);
+            }
+
+            ViewBag.ShippingStatus = shippingStatus;
+
+            return View(query
+                .OrderByDescending(b => b.created_at)
+                .ToList());
+        }
+
+        // Huỷ đơn hàng
+        [HttpPost]
+        public IActionResult CancelBill(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return Unauthorized();
+
+            var bill = _context.Bills
+                .FirstOrDefault(b => b.order_id == id && b.user_id == userId);
+
+            if (bill == null)
+                return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
+
+            if (bill.shipping_status != "Chờ xử lý")
+                return Json(new { success = false, message = "Chỉ huỷ được đơn đang chờ xử lý" });
+
+            bill.shipping_status = "Đã huỷ";   // hoặc "Huỷ"
+            bill.updated_at = DateTime.Now;
+
+            _context.SaveChanges();
+
+            return Json(new { success = true, message = "Huỷ đơn hàng thành công" });
+        }
+
+
+        // Xem sản phẩm đã mua
+        public IActionResult PurchasedProducts()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "Auth");
+
+            var productIds = (
+                from bd in _context.BillDetails
+                join b in _context.Bills on bd.order_id equals b.order_id
+                where b.user_id == userId
+                    && b.shipping_status == "Đã giao"
+                select bd.product_id
+            ).Distinct().ToList();
+
+            var products = _context.Products
+                .Where(p => productIds.Contains(p.product_id))
+                .ToList();
+
+            return View(products);
+        }
+
     }
 }

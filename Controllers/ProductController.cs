@@ -55,9 +55,18 @@ public class ProductController : Controller
 
         //Filter theo khoảng giá
         if (minPrice.HasValue)
-            query = query.Where(p => p.price >= minPrice.Value);
+        {
+            query = query.Where(p =>
+                (p.price * (100 - p.discount_percent) / 100m) >= minPrice.Value
+            );
+        }
+
         if (maxPrice.HasValue)
-            query = query.Where(p => p.price <= maxPrice.Value);
+        {
+            query = query.Where(p =>
+                (p.price * (100 - p.discount_percent) / 100m) <= maxPrice.Value
+            );
+        }
 
         //Sắp xếp theo giá
         switch (sort)
@@ -93,14 +102,14 @@ public class ProductController : Controller
             .ToListAsync();
 
         //Truyền dữ liệu ra View
-        ViewBag.CurrentPage = page;      // Trang hiện tại
-        ViewBag.TotalPages  = totalPages; // Tổng trang
-        ViewBag.PageSize    = pageSize;   // Số SP / trang
-        ViewBag.Sort        = sort;       // Trạng thái sort
-        ViewBag.CategoryIds = categoryIds; // Danh sách category đã chọn
-        ViewBag.MinPrice    = minPrice ?? 0;
-        ViewBag.MaxPrice    = maxPrice ?? 50000000;
-        ViewBag.Keyword     = keyword;  // Từ khóa tìm kiếm
+        ViewBag.CurrentPage = page;         // Trang hiện tại
+        ViewBag.TotalPages  = totalPages;   // Tổng trang
+        ViewBag.PageSize    = pageSize;     // Số SP / trang
+        ViewBag.Sort        = sort;         // Trạng thái sort
+        ViewBag.CategoryIds = categoryIds;  // Danh sách category đã chọn
+        ViewBag.MinPrice    = minPrice ;    // Giá min
+        ViewBag.MaxPrice    = maxPrice ;    // Giá max
+        ViewBag.Keyword     = keyword;      // Từ khóa tìm kiếm
 
         return View(products);
     }

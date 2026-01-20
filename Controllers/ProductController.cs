@@ -117,6 +117,10 @@ public class ProductController : Controller
             return RedirectToAction("Index");
         }
 
+        // Tăng lượt xem sản phẩm
+        product.view_count += 1;
+        await _context.SaveChangesAsync();
+
         // Lấy danh sách sản phẩm liên quan (cùng category, khác id)
         var relatedProducts = await _context.Products
             .Where(p => p.category_id == product.category_id && p.product_id != id && p.status == 1)
@@ -125,7 +129,49 @@ public class ProductController : Controller
 
         ViewBag.RelatedProducts = relatedProducts;
 
-        return View(product);
+        // === LẤY REVIEWS TỪ DATABASE ===
+        // Lấy danh sách reviews kèm thông tin user
+        var reviewsWithUser = await (from r in _context.Reviews
+                                     join u in _context.Users on r.user_id equals u.user_id
+                                     where r.product_id == id && r.status == 1
+                                     orderby r.created_at descending
+                                     select new ReviewWithUser
+                                     {
+                                         review_id = r.review_id,
+                                         product_id = r.product_id,
+                                         user_id = r.user_id,
+                                         rating = r.rating,
+                                         comment = r.comment,
+                                         created_at = r.created_at,
+                                         user_name = u.full_name ?? "Anonymous",
+                                         user_email = u.email ?? ""
+                                     }).ToListAsync();
+
+        // Tính toán thống kê rating
+        var allReviews = await _context.Reviews
+            .Where(r => r.product_id == id && r.status == 1)
+            .ToListAsync();
+
+        var ratingSummary = new RatingSummary
+        {
+            TotalReviews = allReviews.Count,
+            AverageRating = allReviews.Any() ? (decimal)allReviews.Average(r => r.rating) : 0,
+            FiveStars = allReviews.Count(r => r.rating == 5),
+            FourStars = allReviews.Count(r => r.rating == 4),
+            ThreeStars = allReviews.Count(r => r.rating == 3),
+            TwoStars = allReviews.Count(r => r.rating == 2),
+            OneStar = allReviews.Count(r => r.rating == 1)
+        };
+
+        // Tạo ViewModel
+        var viewModel = new ProductDetailsViewModel
+        {
+            Product = product,
+            Reviews = reviewsWithUser,
+            RatingSummary = ratingSummary
+        };
+
+        return View(viewModel);
     }
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

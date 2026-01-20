@@ -11,8 +11,8 @@ namespace PhoneStore.Models
 		public int user_id { get; set; }   
 		public int rating { get; set; }                         
 		public string comment { get; set; } = " ";
-		public DateTime created_at { get; set; }                    
-		public DateTime updated_at { get; set; }                    
-		public bool status { get; set; }
+		public DateTime? created_at { get; set; }  // Nullable                  
+		public DateTime? updated_at { get; set; }  // Nullable                  
+		public byte status { get; set; }  // TINYINT trong SQL Server
     }
 }

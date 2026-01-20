@@ -1,0 +1,287 @@
+@model List<PhoneStore.Models.FavoriteItem>
+@{
+    ViewData["Title"] = "Sản phẩm yêu thích";
+    ViewData["ActiveMenu"] = "Favorite";
+}
+
+<style>
+    .favorite-page {
+        padding: 40px 0;
+        min-height: 500px;
+    }
+    .favorite-item {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        background: #fff;
+        border: 1px solid #e4e7ed;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    .favorite-item:hover {
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    .favorite-item-img {
+        width: 120px;
+        height: 120px;
+        overflow: hidden;
+        border-radius: 5px;
+        margin-right: 20px;
+    }
+    .favorite-item-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .favorite-item-details {
+        flex: 1;
+    }
+    .favorite-item-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2b2d42;
+        margin-bottom: 10px;
+    }
+    .favorite-item-price {
+        font-size: 20px;
+        color: #d10024;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .favorite-item-price del {
+        font-size: 14px;
+        color: #8d99ae;
+        margin-left: 10px;
+    }
+    .favorite-item-date {
+        font-size: 12px;
+        color: #8d99ae;
+    }
+    .favorite-item-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .btn-view {
+        background: #2b2d42;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    .btn-view:hover {
+        background: #1a1b29;
+        color: white;
+    }
+    .btn-remove {
+        background: #d10024;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .btn-remove:hover {
+        background: #a00018;
+    }
+    .empty-favorite {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    .empty-favorite i {
+        font-size: 80px;
+        color: #e4e7ed;
+        margin-bottom: 20px;
+    }
+    .empty-favorite h3 {
+        color: #8d99ae;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="section favorite-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section-title">
+                    <h3 class="title">
+                        <i class="fa fa-heart"></i> Sản phẩm yêu thích của bạn
+                    </h3>
+                </div>
+
+                @if (Model != null && Model.Any())
+                {
+                    <div class="favorite-list">
+                        @foreach (var item in Model)
+                        {
+                            <div class="favorite-item" data-product-id="@item.ProductId">
+                                <div class="favorite-item-img">
+                                    <img src="~/img/@item.Image" alt="@item.ProductName">
+                                </div>
+                                <div class="favorite-item-details">
+                                    <h4 class="favorite-item-name">@item.ProductName</h4>
+                                    <div class="favorite-item-price">
+                                        @((item.Price * (100 - item.DiscountPercent) / 100).ToString("N0")) VND
+                                        @if (item.DiscountPercent > 0)
+                                        {
+                                            <del>@item.Price.ToString("N0") VND</del>
+                                            <span class="badge" style="background: #d10024; color: white; padding: 3px 8px; border-radius: 3px; font-size: 12px; margin-left: 10px;">
+                                                -@item.DiscountPercent%
+                                            </span>
+                                        }
+                                    </div>
+                                    <div class="favorite-item-date">
+                                        <i class="fa fa-clock-o"></i> Đã thêm: @item.AddedDate.ToString("dd/MM/yyyy HH:mm")
+                                    </div>
+                                </div>
+                                <div class="favorite-item-actions">
+                                    <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" class="btn-view">
+                                        <i class="fa fa-eye"></i> Xem chi tiết
+                                    </a>
+                                    <button class="btn-remove" onclick="xoaSanPhamYeuThich(@item.ProductId)">
+                                        <i class="fa fa-trash"></i> Xóa
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div style="margin-top: 30px; text-align: right;">
+                        <button class="primary-btn" onclick="xoaTatCaYeuThich()">
+                            <i class="fa fa-trash"></i> Xóa tất cả
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-favorite">
+                        <i class="fa fa-heart-o"></i>
+                        <h3>Bạn chưa có sản phẩm yêu thích nào</h3>
+                        <p style="color: #8d99ae; margin-bottom: 20px;">
+                            Hãy thêm sản phẩm yêu thích để dễ dàng theo dõi và mua hàng sau này!
+                        </p>
+                        <a href="@Url.Action("Index", "Product")" class="primary-btn">
+                            <i class="fa fa-shopping-bag"></i> Khám phá sản phẩm
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // NTNguyen 20/01/2026 - JavaScript xử lý chức năng yêu thích
+        
+        // Xóa sản phẩm khỏi danh sách yêu thích
+        function xoaSanPhamYeuThich(productId) {
+            if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi danh sách yêu thích?')) {
+                return;
+            }
+
+            fetch('/Favorite/Remove/' + productId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(duLieu => {
+                console.log('Kết quả xóa:', duLieu); // Debug
+                if (duLieu.success) {
+                    // Xóa item khỏi giao diện
+                    const phanTu = document.querySelector(`[data-product-id="${productId}"]`);
+                    if (phanTu) {
+                        phanTu.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => {
+                            phanTu.remove();
+                            
+                            // Cập nhật badge ở header
+                            if (typeof capNhatSoLuongYeuThichHeader === 'function') {
+                                capNhatSoLuongYeuThichHeader();
+                            }
+                            
+                            // Kiểm tra nếu không còn item nào
+                            const cacPhanTuConLai = document.querySelectorAll('.favorite-item');
+                            if (cacPhanTuConLai.length === 0) {
+                                location.reload();
+                            }
+                        }, 300);
+                    }
+                    
+                    hienThiThongBao(duLieu.message, 'success');
+                } else {
+                    hienThiThongBao(duLieu.message, 'error');
+                }
+            })
+            .catch(loi => {
+                console.error('Lỗi:', loi);
+                hienThiThongBao('Có lỗi xảy ra!', 'error');
+            });
+        }
+
+        // Xóa tất cả sản phẩm yêu thích
+        function xoaTatCaYeuThich() {
+            if (!confirm('Bạn có chắc muốn xóa TẤT CẢ sản phẩm yêu thích?')) {
+                return;
+            }
+
+            fetch('/Favorite/Clear', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(duLieu => {
+                if (duLieu.success) {
+                    hienThiThongBao(duLieu.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                }
+            })
+            .catch(loi => {
+                console.error('Lỗi:', loi);
+                hienThiThongBao('Có lỗi xảy ra!', 'error');
+            });
+        }
+
+        // Hiển thị thông báo
+        function hienThiThongBao(noiDung, loai) {
+            const thongBao = document.createElement('div');
+            thongBao.className = `notification ${loai}`;
+            thongBao.innerHTML = `
+                <i class="fa ${loai === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${noiDung}</span>
+            `;
+            thongBao.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${loai === 'success' ? '#4CAF50' : '#f44336'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(thongBao);
+            
+            setTimeout(() => {
+                thongBao.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => thongBao.remove(), 300);
+            }, 3000);
+        }
+        
+        // endNTNguyen
+    </script>
+}

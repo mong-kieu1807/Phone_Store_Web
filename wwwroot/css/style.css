@@ -428,10 +428,13 @@ textarea.input {
 
 .header-links li a {
   color: #FFF;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .header-links li a:hover {
-  color: #D10024;
+  color: #FF6B6B;
+  text-shadow: 0 0 8px rgba(255,107,107,0.4);
 }
 
 .header-links li i {
@@ -2574,11 +2577,12 @@ textarea.input {
 .value-card {
   text-align: center;
   padding: 30px 20px;
-  background: white;
+  background: #fff;
+  border: 2px solid #e8e8e8;
   border-radius: 10px;
   height: 100%;
-  transition: transform 0.3s;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
   margin-bottom: 30px;
 }
 
@@ -2601,6 +2605,8 @@ textarea.input {
 
 .value-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(209, 0, 36, 0.2);
+  border-color: #D10024;
 }
 
 /* Stats Section */
@@ -2646,11 +2652,13 @@ textarea.input {
 
 .feature-card {
   padding: 25px;
-  background: white;
+  background: #fff;
+  border: 1px solid #f0f0f0;
   border-left: 4px solid #D10024;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.12);
   border-radius: 5px;
   margin-bottom: 30px;
+  transition: all 0.3s ease;
 }
 
 .feature-card h4 {
@@ -2666,6 +2674,11 @@ textarea.input {
 .feature-card p {
   color: #666;
   line-height: 1.8;
+}
+
+.feature-card:hover {
+  box-shadow: 0 8px 30px rgba(209, 0, 36, 0.15);
+  transform: translateX(5px);
 }
 
 /* Mission & Vision Section */
@@ -2717,9 +2730,11 @@ textarea.input {
 
 /* Contact CTA Section */
 .about-contact-cta {
-  background: #f8f9fa;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
   padding: 50px 30px;
   border-radius: 10px;
+  border: 2px solid #ffd4d4;
+  box-shadow: 0 5px 25px rgba(209, 0, 36, 0.1);
   text-align: center;
 }
 

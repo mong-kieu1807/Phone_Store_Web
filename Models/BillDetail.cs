@@ -11,6 +11,10 @@ namespace PhoneStore.Models
         public int order_id { get; set; }                         // Khóa chính (FK -> Bills)
 		public int product_id { get; set; }                       // Khóa chính (FK -> Products)
 		public int quantity { get; set; }                         // Số lượng
-	public decimal price { get; set; }                         // Giá tại thời điểm mua
+	    public decimal price { get; set; }                         // Giá tại thời điểm mua
+        
+        // Navigation properties(dùng để kiểm tra quan hệ mua hàng-sản phẩm)
+        [ForeignKey("order_id")]
+        public virtual Bill? Bill { get; set; }
     }
 }

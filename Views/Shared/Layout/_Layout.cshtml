@@ -120,6 +120,33 @@
                 const box = document.getElementById("chat-box");
                 box.style.display = box.style.display === "none" ? "flex" : "none";
             }
+
+            // NTNguyen 20/01/2026 - Cập nhật số lượng yêu thích trong header
+            function capNhatSoLuongYeuThichHeader() {
+                const huyHieu = document.getElementById('favoriteCountBadge');
+                if (huyHieu) {
+                    fetch('/Favorite/Count')
+                        .then(response => response.json())
+                        .then(duLieu => {
+                            huyHieu.textContent = duLieu.count;
+                            if (duLieu.count > 0) {
+                                huyHieu.style.display = 'block';
+                            } else {
+                                huyHieu.style.display = 'none';
+                            }
+                        })
+                        .catch(loi => console.error('Lỗi cập nhật số lượng yêu thích:', loi));
+                }
+            }
+
+            // Gọi khi tải trang
+            document.addEventListener('DOMContentLoaded', function() {
+                capNhatSoLuongYeuThichHeader();
+            });
+            // endNTNguyen
+
+            // Cập nhật mỗi 5 giây (optional - có thể bỏ nếu không cần)
+            // setInterval(capNhatSoLuongYeuThichHeader, 5000);
         </script>
     @await RenderSectionAsync("Scripts", required: false)
 

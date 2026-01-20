@@ -29,6 +29,13 @@ namespace PhoneStore.Data
             // Cấu hình composite key cho BillDetail
             modelBuilder.Entity<BillDetail>()
                 .HasKey(bd => new { bd.order_id, bd.product_id });
+
+            // Cấu hình relationship giữa BillDetail và Bill
+            modelBuilder.Entity<BillDetail>()
+                .HasOne(bd => bd.Bill)
+                .WithMany()
+                .HasForeignKey(bd => bd.order_id)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }

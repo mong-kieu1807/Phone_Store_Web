@@ -1,0 +1,182 @@
+@*NTNguyen*@
+@model PhoneStore.Models.Bill
+@{
+    ViewData["Title"] = "Thêm đơn hàng mới";
+    var users = ViewBag.Users as List<PhoneStore.Models.User>;
+    var paymentMethods = ViewBag.PaymentMethods as List<PhoneStore.Models.Payment_Method>;
+}
+
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">
+                    <i class="fa fa-plus-circle"></i> Thêm đơn hàng mới
+                </h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Thông tin đơn hàng
+                    </div>
+                    <div class="panel-body">
+                        <form asp-action="Create" method="post">
+                            @Html.AntiForgeryToken()
+
+                            <div class="form-group">
+                                <label asp-for="user_id">Khách hàng <span class="text-danger">*</span></label>
+                                <input asp-for="user_id" type="number" class="form-control" placeholder="Nhập mã khách hàng" required list="usersList" />
+                                <datalist id="usersList">
+                                    @if (users != null)
+                                    {
+                                        foreach (var user in users)
+                                        {
+                                            <option value="@user.user_id">@user.full_name (@user.username) - @user.phone</option>
+                                        }
+                                    }
+                                </datalist>
+                                <span asp-validation-for="user_id" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="total_amount">Tổng tiền <span class="text-danger">*</span></label>
+                                <input asp-for="total_amount" type="number" step="1000" min="0" class="form-control" placeholder="Nhập tổng tiền" required />
+                                <span asp-validation-for="total_amount" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="payment_method_id">Phương thức thanh toán</label>
+                                <select asp-for="payment_method_id" class="form-control">
+                                    <option value="">-- Chọn phương thức --</option>
+                                    @if (paymentMethods != null)
+                                    {
+                                        foreach (var method in paymentMethods)
+                                        {
+                                            <option value="@method.method_id">@method.method_name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="shipping_status">Trạng thái giao hàng</label>
+                                <select asp-for="shipping_status" class="form-control">
+                                    <option value="Chờ xử lý" selected>Chờ xử lý</option>
+                                    <option value="Đã xác nhận">Đã xác nhận</option>
+                                    <option value="Đang giao">Đang giao</option>
+                                    <option value="Hoàn thành">Hoàn thành</option>
+                                    <option value="Đã hủy">Đã hủy</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fa fa-save"></i> Thêm đơn hàng
+                                </button>
+                                <a asp-action="Index" class="btn btn-default">
+                                    <i class="fa fa-arrow-left"></i> Quay lại
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<style>
+    #page-wrapper {
+        margin-left: 220px;
+        padding: 20px;
+        min-height: 100vh;
+        background: #f8f9fa;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 8px;
+        display: block;
+        color: #333;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+        border: none;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
+    .btn-default {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-default:hover {
+        background-color: #5a6268;
+    }
+
+    .text-danger {
+        color: #dc3545;
+        font-size: 12px;
+    }
+
+    .panel {
+        background: white;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .panel-heading {
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .panel-body {
+        padding: 20px;
+    }
+
+</style>
+@*endNTNguyen*@

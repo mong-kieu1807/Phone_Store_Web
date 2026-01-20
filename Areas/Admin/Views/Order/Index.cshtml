@@ -1,3 +1,4 @@
+@*NTNguyen*@
 @model List<PhoneStore.Models.Bill>
 @{
     ViewData["Title"] = "Quản lý đơn hàng";
@@ -12,16 +13,13 @@
                         <i class="fa fa-shopping-cart"></i> Quản lý đơn hàng
                     </h1>
                     <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm..." />
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm đơn hàng" />
                         <i class="fa fa-search"></i>
                     </div>
                     <div class="button-group">
-                        <button class="filter-btn sort-btn">
-                            <i class="fa fa-sort"></i> Sắp xếp
-                        </button>
-                        <button class="filter-btn">
-                            <i class="fa fa-filter"></i> Lọc
-                        </button>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Create" class="btn-add">
+                            <i class="fa fa-plus"></i> Thêm đơn hàng
+                        </a>
                     </div>
                 </div>
             </div>
@@ -50,13 +48,13 @@
                                 {
                                     <tr>
                                         <td>@order.order_id</td>
-                                        <td>@order.user_id</td>
+                                        <td>@(order.User?.full_name ?? order.User?.username ?? "Khách hàng #" + order.user_id)</td>
                                         <td>@(order.created_at?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
                                         <td>@order.total_amount.ToString("N0") VNĐ</td>
                                         <td>
                                             @{
                                                 var statusInfo = ViewBag.StatusInfo as Dictionary<string, (string Label, string CssClass)>;
-                                                var status = order.shipping_status ?? "Unknown";
+                                                var status = order.shipping_status ?? "Chờ xử lý";
                                                 
                                                 if (statusInfo != null && statusInfo.ContainsKey(status))
                                                 {
@@ -70,9 +68,12 @@
                                             }
                                         </td>
                                         <td>
-                                            <a asp-area="Admin" asp-controller="Order" asp-action="Details" asp-route-id="@order.order_id" class="btn btn-info btn-sm">
-                                                <i class="fa fa-eye"></i> Chi tiết
+                                            <a asp-area="Admin" asp-controller="Order" asp-action="Edit" asp-route-id="@order.order_id" class="btn btn-warning btn-sm">
+                                                <i class="fa fa-edit"></i> Sửa
                                             </a>
+                                            <button class="btn btn-danger btn-sm" onclick="deleteOrder(@order.order_id)">
+                                                <i class="fa fa-trash"></i> Xóa
+                                            </button>
                                         </td>
                                     </tr>
                                 }
@@ -198,7 +199,141 @@
     .label-danger {
         background-color: #e74c3c;
     }
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 12px;
+        margin-right: 5px;
+    }
+    .btn-info {
+        background-color: #17a2b8;
+        color: white;
+        border: none;
+    }
+    .btn-info:hover {
+        background-color: #138496;
+    }
+    .btn-warning {
+        background-color: #ffc107;
+        color: #212529;
+        border: none;
+    }
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+    }
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+    .btn-add {
+        padding: 10px 20px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+        flex-shrink: 0;
+        text-decoration: none;
+    }
+    .btn-add:hover {
+        background: #218838;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function deleteOrder(orderId) {
+        Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: "Bạn có chắc chắn muốn xóa đơn hàng #" + orderId + "?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('@Url.Action("Delete", "Order", new { area = "Admin" })/' + orderId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: data.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire('Lỗi!', data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    Swal.fire('Lỗi!', 'Có lỗi xảy ra khi xóa đơn hàng', 'error');
+                });
+            }
+        });
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <text>
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            showConfirmButton: false,
+            timer: 1500
+        });
+        </text>
+    }
+
+    // Tìm kiếm đơn hàng
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        var searchText = this.value.toLowerCase();
+        var table = document.querySelector('.table tbody');
+        var rows = table.getElementsByTagName('tr');
+
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            var cells = row.getElementsByTagName('td');
+            var found = false;
+
+            // Tìm trong: Mã đơn (0), Khách hàng (1), Tổng tiền (3)
+            for (var j = 0; j < cells.length; j++) {
+                var cellText = cells[j].textContent || cells[j].innerText;
+                if (cellText.toLowerCase().indexOf(searchText) > -1) {
+                    found = true;
+                    break;
+                }
+            }
+
+            row.style.display = found ? '' : 'none';
+        }
+    });
+</script>
     .label-default {
         background-color: #95a5a6;
     }
 </style>
+@*endNTNguyen*@

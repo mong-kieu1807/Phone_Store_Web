@@ -17,5 +17,12 @@ namespace PhoneStore.Models
 		public DateTime? created_at { get; set; } // Ngày tạo	
 		public DateTime? updated_at { get; set; } // Ngày cập nhật
         public byte status { get; set; } = 1;                // Trạng thái hóa đơn (1 = hoạt động, 0 = ẩn)
+
+        // Navigation properties
+        [ForeignKey("user_id")]
+        public virtual User? User { get; set; }
+
+        [ForeignKey("payment_method_id")]
+        public virtual Payment_Method? PaymentMethod { get; set; }
     }
 }

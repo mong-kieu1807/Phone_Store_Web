@@ -24,25 +24,24 @@ namespace PhoneStore.Models
 		public int sold_count { get; set; }                  // Số lượng đã bán
 		public int view_count { get; set; }                  // Số lượt xem
 		public decimal rating { get; set; }
-		public int view_count { get; set; }
-		public string image { get; set; } = string.Empty;           // Ảnh
-		
-		public string description { get; set; } = string.Empty;     // Mô tả
-		
-		public string ram { get; set; } = string.Empty;
-		
-		public string storage { get; set; } = string.Empty;
-		
-		public string color { get; set; } = string.Empty;
-		
-		public string os { get; set; } = string.Empty;
-		
-		public string screen_size { get; set; } = string.Empty;
-		
-		public byte status { get; set; }                // Trạng thái (1 = hoạt động, 0 = ẩn)
-		
-		public DateTime created_at { get; set; }         // Ngày tạo
-		
-		public DateTime updated_at { get; set; }         // Ngày cập nhật
+	public string image { get; set; } = string.Empty;           // Ảnh
+	
+	public string description { get; set; } = string.Empty;     // Mô tả
+	
+	public string ram { get; set; } = string.Empty;
+	
+	public string storage { get; set; } = string.Empty;
+	
+	public string color { get; set; } = string.Empty;
+	
+	public string os { get; set; } = string.Empty;
+	
+	public string screen_size { get; set; } = string.Empty;
+	
+	public byte status { get; set; }                // Trạng thái (1 = hoạt động, 0 = ẩn)
+	
+	public DateTime created_at { get; set; }         // Ngày tạo
+	
+	public DateTime updated_at { get; set; }         // Ngày cập nhật
     }
 }

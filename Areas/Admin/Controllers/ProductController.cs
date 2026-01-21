@@ -182,12 +182,13 @@ namespace PhoneStore.Areas.Admin.Controllers
 
 			await _context.SaveChangesAsync();
 
-			TempData["SuccessMessage"] = "Cập nhật sản phẩm thành công!";
-			return RedirectToAction("Index");
+			ViewBag.SuccessMessage = "Cập nhật sản phẩm thành công!";
+			ViewBag.Categories = await _context.Set<Category>().Where(c => c.status == 1).ToListAsync();
+			return View(existingProduct);
 		}
 		catch (Exception ex)
 		{
-			TempData["ErrorMessage"] = "Lỗi: " + ex.Message;
+			ViewBag.ErrorMessage = "Lỗi: " + ex.Message;
 			ViewBag.Categories = await _context.Set<Category>().Where(c => c.status == 1).ToListAsync();
 		return View(product);
 	}
@@ -208,7 +209,7 @@ public async Task<IActionResult> DeleteProduct(int id)
 		// Xóa ảnh
 		if (!string.IsNullOrEmpty(product.image))
 		{
-			var uploadDir = Path.Combine(_env.WebRootPath, "img", "Products");
+			var uploadDir = Path.Combine(_env.WebRootPath, "img");
 			var filePath = Path.Combine(uploadDir, product.image);
 			if (System.IO.File.Exists(filePath))
 			{

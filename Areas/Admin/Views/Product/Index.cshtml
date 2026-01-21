@@ -17,14 +17,7 @@
 						<input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm..." />
 						<i class="fa fa-search"></i>
 					</div>
-					<div class="button-group">
-						<button class="filter-btn sort-btn">
-							<i class="fa fa-sort"></i> Sắp xếp
-						</button>
-						<button class="filter-btn">
-							<i class="fa fa-filter"></i> Lọc
-						</button>
-					</div>
+
 				</div>
 			</div>
 		</div>
@@ -145,12 +138,11 @@
 	<script>
 		function deleteProduct(id) {
 			if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
-				fetch('@Url.Action("DeleteProduct", "Product", new { area = "Admin" })', {
+				fetch('@Url.Action("DeleteProduct", "Product", new { area = "Admin" })?id=' + id, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(id)
+					}
 				})
 				.then(response => response.json())
 				.then(data => {

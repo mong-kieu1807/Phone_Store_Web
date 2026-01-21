@@ -28,10 +28,8 @@ namespace PhoneStore.Areas.Admin.Controllers
             ViewBag.StatusInfo = new Dictionary<string, (string Label, string CssClass)>
             {
                 { "Chờ xử lý", ("Chờ xử lý", "label-warning") },
-                { "Đã xác nhận", ("Đã xác nhận", "label-info") },
                 { "Đang giao", ("Đang giao", "label-primary") },
-                { "Hoàn thành", ("Hoàn thành", "label-success") },
-                { "Đã hủy", ("Đã hủy", "label-danger") }
+                { "Đã giao", ("Đã giao", "label-success") }
             };
             
             return View(orders);

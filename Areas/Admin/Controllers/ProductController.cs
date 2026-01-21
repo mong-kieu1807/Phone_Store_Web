@@ -79,6 +79,7 @@ namespace PhoneStore.Areas.Admin.Controllers
 				
 				product.image = fileName;
 			}
+			
 
 			product.created_at = DateTime.Now;
 			product.updated_at = DateTime.Now;

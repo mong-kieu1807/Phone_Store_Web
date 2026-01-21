@@ -71,10 +71,16 @@
                         </div>
                         <a class="review-link" href="#tab3">@Model.RatingSummary.TotalReviews Review(s) | Add your review</a>
                     </div>
-                    <!-- Hiển thị lượt xem -->
-                    <div style="margin-top: 10px; color: #666;">
-                        <i class="fa fa-eye"></i> <strong>@Model.Product.view_count</strong> lượt xem
+                    @* NTNguyen - Hiển thị lượt xem và lượt thích trên cùng 1 hàng *@
+                    <div style="margin-top: 10px; color: #666; display: flex; gap: 20px;">
+                        <span>
+                            <i class="fa fa-eye"></i> <strong>@Model.Product.view_count</strong> lượt xem
+                        </span>
+                        <span>
+                            <i class="fa fa-heart" style="color: #e74c3c;"></i> <strong>@Model.Product.like_count</strong> lượt thích
+                        </span>
                     </div>
+                    @* endNTNguyen *@
                     <div>
                         <h3 class="product-price">
                             @discountedPrice.ToString("N0") VND

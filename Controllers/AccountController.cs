@@ -173,7 +173,7 @@ namespace PhoneStore.Controllers
                     && b.shipping_status == "Đã giao"
                 select bd.product_id
             ).Distinct().ToList();
-
+            
             var products = _context.Products
                 .Where(p => productIds.Contains(p.product_id))
                 .ToList();

@@ -39,7 +39,6 @@
                                     <th>Khách hàng</th>
                                     <th>Ngày đặt</th>
                                     <th>Tổng tiền</th>
-                                    <th>Trạng thái</th>
                                     <th>Hành động</th>
                                 </tr>
                             </thead>
@@ -51,22 +50,6 @@
                                         <td>@(order.User?.full_name ?? order.User?.username ?? "Khách hàng #" + order.user_id)</td>
                                         <td>@(order.created_at?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
                                         <td>@order.total_amount.ToString("N0") VNĐ</td>
-                                        <td>
-                                            @{
-                                                var statusInfo = ViewBag.StatusInfo as Dictionary<string, (string Label, string CssClass)>;
-                                                var status = order.shipping_status ?? "Chờ xử lý";
-                                                
-                                                if (statusInfo != null && statusInfo.ContainsKey(status))
-                                                {
-                                                    var info = statusInfo[status];
-                                                    <span class="label @info.CssClass">@info.Label</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="label label-default">@status</span>
-                                                }
-                                            }
-                                        </td>
                                         <td>
                                             <a asp-area="Admin" asp-controller="Order" asp-action="Edit" asp-route-id="@order.order_id" class="btn btn-warning btn-sm">
                                                 <i class="fa fa-edit"></i> Sửa

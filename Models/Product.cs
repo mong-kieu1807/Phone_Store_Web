@@ -24,7 +24,7 @@ namespace PhoneStore.Models
 		public int sold_count { get; set; }                  // Số lượng đã bán
 		public int view_count { get; set; }                  // Số lượt xem
 		public decimal rating { get; set; }
-		public int view_count { get; set; }
+		public int like_count { get; set; }				  // Số lượt thích
 		public string image { get; set; } = string.Empty;           // Ảnh
 		
 		public string description { get; set; } = string.Empty;     // Mô tả

@@ -8,6 +8,6 @@ namespace PhoneStore.Models
 		[Key]
 		public int method_id { get; set; }                         
 		public string method_name { get; set; } = " ";              
-		public bool status { get; set; }
+		public byte status { get; set; } = 1;
     }
 }

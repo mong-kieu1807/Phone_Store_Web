@@ -85,7 +85,7 @@ namespace PhoneStore.Controllers
         ///Đăng nhập
         /// Hiển thị trang đăng nhập
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult Login(string? returnUrl = null)
         {
             // Nếu đã đăng nhập rồi
             var maNguoiDung = HttpContext.Session.GetInt32("UserId");
@@ -109,7 +109,7 @@ namespace PhoneStore.Controllers
         /// Xử lý đăng nhập
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string username, string password, string returnUrl = null)
+        public async Task<IActionResult> Login(string username, string password, string? returnUrl = null)
         {
             // B1: Validate input
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))

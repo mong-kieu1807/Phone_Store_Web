@@ -226,17 +226,78 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <h4>Product Specifications</h4>
-                                    <ul>
-                                        <li><strong>Brand:</strong> @Model.Product.brand</li>
-                                        <li><strong>Product Name:</strong> @Model.Product.product_name</li>
-                                        <li><strong>Price:</strong> @Model.Product.price.ToString("N0") VND</li>
-                                        @if (Model.Product.discount_percent > 0)
-                                        {
-                                            <li><strong>Discount:</strong> @Model.Product.discount_percent%</li>
-                                            <li><strong>Discounted Price:</strong> @discountedPrice.ToString("N0") VND</li>
-                                        }
-                                        <li><strong>Available Quantity:</strong> @Model.Product.stock_quantity</li>
-                                    </ul>
+                                    <div class="product-specs-table" style="border: 1px solid #e4e4e4; border-radius: 5px; overflow: hidden;">
+                                        <table style="width: 100%; border-collapse: collapse;">
+                                            <tbody>
+                                                <tr style="background-color: #f9f9f9;">
+                                                    <td style="padding: 15px; border-bottom: 1px solid #e4e4e4; width: 30%; font-weight: bold;">Brand</td>
+                                                    <td style="padding: 15px; border-bottom: 1px solid #e4e4e4;">@Model.Product.brand</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 15px; border-bottom: 1px solid #e4e4e4; width: 30%; font-weight: bold;">Product Name</td>
+                                                    <td style="padding: 15px; border-bottom: 1px solid #e4e4e4;">@Model.Product.product_name</td>
+                                                </tr>
+                                                <tr style="background-color: #f9f9f9;">
+                                                    <td style="padding: 15px; border-bottom: 1px solid #e4e4e4; font-weight: bold;">Price</td>
+                                                    <td style="padding: 15px; border-bottom: 1px solid #e4e4e4;">@Model.Product.price.ToString("N0") VND</td>
+                                                </tr>
+                                                @if (Model.Product.discount_percent > 0)
+                                                {
+                                                    <tr>
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4; font-weight: bold;">Discount</td>
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4;">@Model.Product.discount_percent%</td>
+                                                    </tr>
+                                                    <tr style="background-color: #f9f9f9;">
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4; font-weight: bold;">Discounted Price</td>
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4; color: #D10024; font-weight: bold;">@discountedPrice.ToString("N0") VND</td>
+                                                    </tr>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.Product.ram))
+                                                {
+                                                    <tr style="background-color: #f9f9f9;">
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4; font-weight: bold;">RAM</td>
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4;">@Model.Product.ram</td>
+                                                    </tr>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.Product.storage))
+                                                {
+                                                    <tr>
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4; font-weight: bold;">Storage</td>
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4;">@Model.Product.storage</td>
+                                                    </tr>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.Product.color))
+                                                {
+                                                    <tr style="background-color: #f9f9f9;">
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4; font-weight: bold;">Color</td>
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4;">@Model.Product.color</td>
+                                                    </tr>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.Product.os))
+                                                {
+                                                    <tr>
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4; font-weight: bold;">Operating System</td>
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4;">@Model.Product.os</td>
+                                                    </tr>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.Product.screen_size))
+                                                {
+                                                    <tr style="background-color: #f9f9f9;">
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4; font-weight: bold;">Screen Size</td>
+                                                        <td style="padding: 15px; border-bottom: 1px solid #e4e4e4;">@Model.Product.screen_size</td>
+                                                    </tr>
+                                                }
+                                                <tr>
+                                                    <td style="padding: 15px; font-weight: bold;">Available Quantity</td>
+                                                    <td style="padding: 15px;">
+                                                        <span style="color: @(Model.Product.stock_quantity > 0 ? "#4CAF50" : "#f44336"); font-weight: bold;">
+                                                            @Model.Product.stock_quantity
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>

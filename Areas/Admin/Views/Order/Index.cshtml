@@ -39,6 +39,7 @@
                                     <th>Khách hàng</th>
                                     <th>Ngày đặt</th>
                                     <th>Tổng tiền</th>
+                                    <th>Trạng thái giao hàng</th>
                                     <th>Hành động</th>
                                 </tr>
                             </thead>
@@ -50,6 +51,19 @@
                                         <td>@(order.User?.full_name ?? order.User?.username ?? "Khách hàng #" + order.user_id)</td>
                                         <td>@(order.created_at?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
                                         <td>@order.total_amount.ToString("N0") VNĐ</td>
+                                        <td>
+                                            @{
+                                                var shippingStatus = order.shipping_status ?? "Chờ xử lý";
+                                                var cssClass = shippingStatus switch
+                                                {
+                                                    "Chờ xử lý" => "label-warning",
+                                                    "Đang giao" => "label-primary",
+                                                    "Đã giao" => "label-success",
+                                                    _ => "label-default"
+                                                };
+                                            }
+                                            <span class="label @cssClass">@shippingStatus</span>
+                                        </td>
                                         <td>
                                             <a asp-area="Admin" asp-controller="Order" asp-action="Edit" asp-route-id="@order.order_id" class="btn btn-warning btn-sm">
                                                 <i class="fa fa-edit"></i> Sửa

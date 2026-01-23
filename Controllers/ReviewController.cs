@@ -38,6 +38,7 @@ namespace PhoneStore.Controllers
                 if (userId == null || userId <= 0)
                 {
                     return Json(new { success = false, message = "Vui lòng đăng nhập để đánh giá!" });
+
                 }
 
                 int userIdValue = userId.Value;

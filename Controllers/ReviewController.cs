@@ -21,10 +21,17 @@ namespace PhoneStore.Controllers
         [HttpPost]
         public async Task<IActionResult> ThemDanhGia(int productId, int rating, string? comment = null)
         {
+            return await AddReview(productId, rating, comment);
+        }
+
+        // Alias cho ThemDanhGia để hỗ trợ cả route tiếng Anh
+        [HttpPost]
+        public async Task<IActionResult> AddReview(int productId, int rating, string? comment = null)
+        {
             try
             {
                 // Debug log
-                Console.WriteLine($"ThemDanhGia called - ProductId: {productId}, Rating: {rating}, Comment: {comment ?? "null"}");
+                Console.WriteLine($"AddReview called - ProductId: {productId}, Rating: {rating}, Comment: {comment ?? "null"}");
 
                 // Kiểm tra đăng nhập
                 var userId = HttpContext.Session.GetInt32("UserId");

@@ -19,22 +19,32 @@ namespace PhoneStore.Areas.Admin.Controllers
 		}
 
 		// Hiển thị danh sách sản phẩm với phân trang
-		public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+		public async Task<IActionResult> Index(string? search,int page = 1, int pageSize = 10)
 		{
-			int totalProducts = await _context.Products.CountAsync();
+			var query = _context.Products
+                .Where(c => c.status == 1);   
+
+			// Tìm kiếm theo từ khóa
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(c => c.product_name.Contains(search));
+            }
+			int totalProducts = await query.CountAsync();
 			int totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
 
 			if (totalPages == 0) totalPages = 1;
 			if (page < 1) page = 1;
 			if (page > totalPages) page = totalPages;
 
-			var pagedProducts = await _context.Products
-			.OrderBy(p => p.product_id)
-			.Skip((page - 1) * pageSize)
-			.Take(pageSize)
-			.ToListAsync();
+			var pagedProducts = await query
+				.OrderBy(p => p.created_at)
+				.Skip((page - 1) * pageSize)
+				.Take(pageSize)
+				.ToListAsync();
+				
 			ViewBag.Page = page;
 			ViewBag.TotalPages = totalPages;
+			ViewBag.Search = search;
 			return View(pagedProducts);
 		}
 

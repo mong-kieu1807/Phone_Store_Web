@@ -54,9 +54,37 @@ public class HomeController : Controller
         return View(viewModel);
     }
 
-    public IActionResult AboutUs()
+    public async Task<IActionResult> AboutUs(string? searchKeyword, int page = 1)
     {
-        return View();
+        int pageSize = 6; // Số bài viết mỗi trang
+        
+        // Query blogs với tìm kiếm
+        var blogsQuery = _context.Blogs.Where(b => b.status == 1);
+        
+        if (!string.IsNullOrWhiteSpace(searchKeyword))
+        {
+            blogsQuery = blogsQuery.Where(b => 
+                b.title.Contains(searchKeyword) || 
+                b.content.Contains(searchKeyword) || 
+                b.summary.Contains(searchKeyword));
+        }
+        
+        // Tổng số bài viết
+        var totalBlogs = await blogsQuery.CountAsync();
+        
+        // Lấy blogs cho trang hiện tại
+        var blogs = await blogsQuery
+            .OrderByDescending(b => b.created_at)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+        
+        // Tính tổng số trang
+        ViewBag.TotalPages = (int)Math.Ceiling(totalBlogs / (double)pageSize);
+        ViewBag.CurrentPage = page;
+        ViewBag.SearchKeyword = searchKeyword;
+        
+        return View(blogs);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

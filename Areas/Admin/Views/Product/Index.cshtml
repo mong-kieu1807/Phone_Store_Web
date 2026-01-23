@@ -14,7 +14,10 @@
 						<i class="fa fa-mobile"></i> Quản lý sản phẩm
 					</h1>
 					<div class="search-box">
-						<input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm..." />
+						<input type="text" 
+							id="searchInput" 
+							placeholder="Tìm kiếm sản phẩm..." 
+							value="@ViewBag.Search" />
 						<i class="fa fa-search"></i>
 					</div>
 
@@ -158,5 +161,20 @@
 				});
 			}
 		}
+
+		// Tìm kiếm khi nhấn Enter
+		document.getElementById('searchInput')
+		.addEventListener('keypress', function (e) {
+			if (e.key === 'Enter') {
+				let keyword = this.value.trim();
+				let url = '@Url.Action("Index","Product", new { area = "Admin" })';
+
+				if (keyword !== '') {
+					url += '?search=' + encodeURIComponent(keyword);
+				}
+
+				window.location.href = url;
+			}
+		});
 	</script>
 }

@@ -1,3 +1,4 @@
+@model IEnumerable<PhoneStore.Models.Blog>
 @{
     ViewData["Title"] = "Về Chúng Tôi - Phone Store";
     ViewData["ActiveMenu"] = "About";
@@ -120,6 +121,102 @@
                     </p>
                 </div>
             </div>
+        </div>
+
+        <!-- Blog Section -->
+        <div class="row about-blog-section">
+            <div class="col-md-12 section-title">
+                <h2>Tin Tức & Blog</h2>
+                <p>Cập nhật những thông tin mới nhất về công nghệ và sản phẩm</p>
+            </div>
+
+            <!-- Search Form -->
+            <div class="col-md-12">
+                <div class="blog-search-box">
+                    <form method="get" asp-action="AboutUs" asp-controller="Home">
+                        <div class="input-group">
+                            <input type="text" 
+                                   name="searchKeyword" 
+                                   class="form-control" 
+                                   placeholder="Tìm kiếm bài viết..." 
+                                   value="@ViewBag.SearchKeyword">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-search"></i> Tìm kiếm
+                                </button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Blog List -->
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var blog in Model)
+                {
+                    <div class="col-md-4 col-sm-6">
+                        <div class="blog-card">
+                            @if (!string.IsNullOrEmpty(blog.image))
+                            {
+                                <div class="blog-image">
+                                    <img src="~/img/@blog.image" alt="@blog.title" onerror="this.src='/img/product01.png'">
+                                </div>
+                            }
+                            <div class="blog-content">
+                                <div class="blog-meta">
+                                    <span><i class="fa fa-calendar"></i> @blog.created_at.ToString("dd/MM/yyyy")</span>
+                                    <span><i class="fa fa-user"></i> @blog.author</span>
+                                    <span><i class="fa fa-eye"></i> @blog.view_count lượt xem</span>
+                                </div>
+                                <h3 class="blog-title">@blog.title</h3>
+                                <p class="blog-summary">@blog.summary</p>
+                                <a href="#" class="blog-read-more">Đọc thêm <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Pagination -->
+                <div class="col-md-12">
+                    <div class="blog-pagination">
+                        <ul class="pagination">
+                            @if (ViewBag.CurrentPage > 1)
+                            {
+                                <li>
+                                    <a href="?page=@(ViewBag.CurrentPage - 1)@(string.IsNullOrEmpty(ViewBag.SearchKeyword) ? "" : "&searchKeyword=" + ViewBag.SearchKeyword)">
+                                        <i class="fa fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            }
+
+                            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                            {
+                                <li class="@(i == ViewBag.CurrentPage ? "active" : "")">
+                                    <a href="?page=@i@(string.IsNullOrEmpty(ViewBag.SearchKeyword) ? "" : "&searchKeyword=" + ViewBag.SearchKeyword)">@i</a>
+                                </li>
+                            }
+
+                            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                            {
+                                <li>
+                                    <a href="?page=@(ViewBag.CurrentPage + 1)@(string.IsNullOrEmpty(ViewBag.SearchKeyword) ? "" : "&searchKeyword=" + ViewBag.SearchKeyword)">
+                                        <i class="fa fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-md-12">
+                    <div class="no-blog-found">
+                        <p><i class="fa fa-info-circle"></i> Không tìm thấy bài viết nào.</p>
+                    </div>
+                </div>
+            }
         </div>
 
         <!-- Contact CTA -->

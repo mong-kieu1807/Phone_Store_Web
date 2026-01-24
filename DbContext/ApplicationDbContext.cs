@@ -18,6 +18,7 @@ namespace PhoneStore.Data
         public DbSet<Payment_Method> Payment_Methods { get; set; }
         public DbSet<Websetting> Websettings { get; set; }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
